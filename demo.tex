@@ -1,0 +1,236 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[framemethod=latex]{mdframed}
+\usepackage{pygmentex}
+
+
+\definecolor{shadecolor}{rgb}{0.9,0.9,0.9}
+\definecolor{lightgreen}{rgb}{0.8,0.95,0.8}
+
+\def\a{Bla bla bla bla bla bla bla bla bla bla bla.}
+\def\b{\a\a\a\a\a}
+
+\begin{document}
+
+\title{Testing Pygmen\TeX}
+\author{José Romildo}
+\maketitle
+
+\section{The Pygmen\TeX{} package}
+
+This document demonstrates how to use the pygment\TeX{} package to typeset
+code listings with \LaTeX{} and
+Pygments\footnote{\url{http://pygments.org/}}.
+
+Pygments is a generic syntax highlighter for general use in all kinds of
+software such as forum systems, wikis or other applications that need to
+prettify source code.
+
+Pygmen\TeX{} provides an environment and two commands for typesetting code
+listings in a \LaTeX{} document:
+\begin{itemize}
+  \item the \texttt{pygmented} environment typesets its contents,
+  \item the \texttt{includepygmented} command typesets the contents of a
+  file, including the result in the \LaTeX{} document, and
+  \item the \texttt{pyginline} command typesets its contents, keeping
+  the result in the same line.
+\end{itemize}
+They accept many options that allow the user to configure the listing in
+many ways.
+
+Read the remaining of this document to have an ided of what the package
+is capable of.
+
+\section{How to use the package}
+
+In order to use the package, start by putting
+\begin{verbatim}
+\usepackage{pygmentex}
+\end{verbatim}
+in the preamble of the document.
+
+Use the environment or commands mentioned previously to include source
+listings on your document.
+
+When compiling the document (with \texttt{pdflatex}, for instance), all
+the source listings in the document wil be collected and saved in a
+temporary file with the extension \texttt{.snippets} in its name. Then
+the auxiliary program \texttt{pygmentex} (a Python application
+distributed with the pygmen\TeX{} package) should be run taking this
+file as input. It will produce another temporary file with the extension
+\texttt{.pygmented} containing \LaTeX{} code for the code listings
+previously collected. The next time the document is compiled, they are
+included to produce the final typeset document.
+
+\section{First example}
+
+See listing \ref{lst:a} for an example.
+
+\begin{pygmented}[
+  lang=scheme,
+  linenos,
+  backgroundcolor=shadecolor,
+  label=lst:a,
+  caption=A \textsl{Scheme} program.,
+  ]
+(define fact
+    (lambda (n)
+        (if (= n 0)
+            1
+            (* n (fact (- n 1))))))
+\end{pygmented}
+
+
+\section{Inline code snippets}
+
+An inline source code snippet:
+\pyginline[lang=c]|const double alfa = 3.14159;|
+This is a C declaration with initialization.
+
+\pyginline[lang=prolog,backgroundcolor=yellow]=avo(A,B) :- pai(A,X), pai(X,B).=
+is a Prolog clause. Its head is
+\pyginline[lang=prolog,style=emacs,backgroundcolor=yellow,linecolor=red]=avo(A,B)=
+and its body is
+\pyginline[lang=prolog,style=vim,backgroundcolor=black,hidealllines]=pai(A,X), pai(X,B)=.
+
+\setpygmented{backgroundcolor=shadecolor}
+
+This one
+\pyginline[lang=ocaml,font=\ttfamily\scriptsize,topline=false]:let x = [1;2;3] in length x:
+is an OCaml expression with local bindings. With OCaml one can do
+imperative, functional and object oriented programming.
+
+Now some Java code:
+\pyginline[lang=java,style=colorful,font=\ttfamily\itshape,linewidth=1pt]|public int f(double x)|.
+This is a method header.
+
+\section{Displayed code snippets}
+
+\setpygmented{lang=scheme,backgroundcolor=shadecolor,linecolor=blue,style=emacs}
+
+In listing \ref{lst:fact} you can see a function definition in the
+Scheme language. This function computes the factorial of a natural
+number.  \newline\rule{\linewidth}{2pt}
+\begin{pygmented}[
+  style=emacs,
+  rightline=false,
+  linenos,
+  label=lst:fact,
+  caption=A \textbf{Scheme} function.
+  ]
+(define fact
+    (lambda (n)
+        (if (= n 0)
+            1
+            (* n (fact (- n 1))))))
+\end{pygmented}
+
+Here you have some more code to further testing the package. Listing
+\ref{lst:haskell} is a Haskell program. When run this program interacts
+with the user asking the user name, reading a line input by the user,
+and showing a greeting message to the user.
+
+\inputpygmented[
+lang=haskell,
+linenos,
+linenostart=79831,
+innerlinecolor=yellow, innerlinewidth=6pt,
+middlelinecolor=blue, middlelinewidth=10pt,
+outerlinecolor=green, outerlinewidth=12pt,
+roundcorner=4,
+backgroundcolor=shadecolor,
+caption=A haskell interactive program,
+label=lst:haskell,
+]{demo.hs}
+
+This is a rule:
+
+\noindent\rule{\linewidth}{2pt}
+
+Now a Pascal procedure:
+
+\inputpygmented[
+  lang=delphi,
+  linewidth=1.5pt,
+  font=\ttfamily\sffamily\large,
+  backgroundcolor=yellow
+  ]{demo.delphi}
+and a Pascal program
+\inputpygmented[lang=pascal,linenos,linenostart=5801]{demo.pas}
+
+A Python code snippet:
+
+\inputpygmented[lang=python,style=emacs,linenos,linenostep=3,linewidth=1pt,backgroundcolor=lightgreen]{demo.py}
+
+\section{Escaping to \LaTeX{} in code snippets}
+
+\begin{pygmented}[lang=c,style=manni,escapeinside=||,
+% caption=Conditional command.
+]
+if (|\textit{condition}|)
+  |\textit{command$_1$}|
+else
+  |\textit{command$_2$}|
+\end{pygmented}
+
+
+\section{Using code snippets in environments}
+
+The following is a \textbf{description} environment.
+
+\begin{description}
+  \item[An item] \a
+  \begin{pygmented}[lang=scala,backgroundcolor=yellow,
+    % title=Item A
+    ]
+def qsort(xs: List[Int]): List[Int] =
+  xs match {
+    case Nil =>
+      Nil
+    case pivot :: tail =>
+      qsort(tail filter { _ < pivot }) :::
+        pivot :: qsort(tail filter { _ >= pivot })
+  }
+  \end{pygmented}
+  \b
+  
+  \item[Another item] \a
+  \begin{pygmented}[lang=lua,backgroundcolor=yellow]
+--- Spawn a program.
+-- @param cmd The command.
+-- @param sn Enable startup-notification.
+-- @param screen The screen where to spawn window.
+-- @return The awesome.spawn return value.
+function spawn(cmd, sn, screen)
+    if cmd and cmd ~= "" then
+        if sn == nil then sn = true end
+        return capi.awesome.spawn(cmd, sn, screen or capi.mouse.screen)
+    end
+end
+  \end{pygmented}
+  \b
+\end{description}
+
+\section{A long program}
+
+Here you can read the source code for the \texttt{pygmentex.py} program
+that I have written.
+
+\inputpygmented[
+lang=python,
+style=autumn,
+backgroundcolor=green!10,
+font=\ttfamily\scriptsize,
+]{pygmentex.py}
+
+\section{Conclusion}
+
+That is all.
+
+
+\end{document}
