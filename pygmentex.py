@@ -12,7 +12,7 @@
     :license: BSD, see LICENSE for details
 """
 
-__version__ = '0.3'
+__version__ = '0.5'
 __docformat__ = 'restructuredtext'
 
 import sys
@@ -225,7 +225,7 @@ GENERIC_DEFINITIONS_2 = r'''
 
 INLINE_SNIPPET_TEMPLATE = r'''
 \expandafter\def\csname pygmented@snippet@%(number)s\endcsname{%%
-  \pygmented@snippet@do{\myfbox}{%%
+  \pygmented@snippet@do{\efbox}{%%
 %(body)s%%
 }}
 '''

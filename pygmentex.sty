@@ -2,7 +2,7 @@
 
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{pygmentex}[2011/12/22 v0.5 A Pygmentex layer for LaTeX]
+\ProvidesPackage{pygmentex}[2012/02/14 v0.5 A Pygmentex layer for LaTeX]
 
 \RequirePackage{fancyvrb}
 \RequirePackage{color}
@@ -13,7 +13,7 @@
 \RequirePackage{efbox}
 % \RequirePackage{myframed}
 % \RequirePackage{maboites}
-\RequirePackage[framemethod=default]{mdframed}
+\RequirePackage{mdframed}
 
 %\DeclareCaptionType[within=chapter]{code}[Listagem][Lista de listagens]
 \DeclareCaptionType{code}[Listagem][Lista de listagens]
@@ -149,10 +149,7 @@
   firstnumber/.store in  = \pygmented@opt@firstnumber,
   stepnumber/.store in   = \pygmented@opt@stepnumber,
   numbersep/.store in    = \pygmented@opt@numbersep,
-  fontfamily/.store in   = \pygmented@opt@fontfamily,
-  fontsize/.store in     = \pygmented@opt@fontsize,
-  fontshape/.store in    = \pygmented@opt@fontshape,
-  fontseries/.store in   = \pygmented@opt@fontseries,
+  font/.store in         = \pygmented@opt@font,
   framesep/.store in     = \pygmented@opt@framesep,
   framerule/.store in    = \pygmented@opt@framerule,
   firstline/.store in    = \pygmented@opt@firstline,
@@ -178,10 +175,7 @@
   framesep   = \fboxsep,
   linenos    = false,
   numbersep  = 2pt,
-  fontfamily = \ttfamily,
-  fontsize   =,
-  fontshape  =,
-  fontseries =,
+  font       = \ttfamily,
   frame      = none,
   tabsize    = 8,
 }
@@ -260,16 +254,14 @@
 \def\pygmented@snippet@do#1#2{%
   \begingroup
     \csname PYstyle\pygmented@opt@style\endcsname
+    \pygmented@opt@font
     \call@with@saved@options{#1}{\test@unknown}{%
-      % fontfamily=\pygmented@opt@fontfamily,%
+      font=\pygmented@opt@font,%
       % frame=\pygmented@opt@frame,%
       % framerule=\pygmented@opt@framerule,%
       % framesep=\pygmented@opt@framesep%
     }{%
-      \pygmented@opt@fontfamily
-      \pygmented@opt@fontseries
-      \pygmented@opt@fontshape
-      \pygmented@opt@fontsize
+      \pygmented@opt@font
       #2}%
   \endgroup
 }
@@ -283,11 +275,17 @@
 
 \newdimen\pygmented@leftmargin
 \newdimen\pygmented@linenosep
+\newdimen\pygmented@linenosep@total
 
 \def\pygmented@lineno@do#1{%
+  \pygmented@linenosep@total\pygmented@linenosep
+  \advance\pygmented@linenosep@total\mdflength{outerlinewidth}%
+  \advance\pygmented@linenosep@total\mdflength{middlelinewidth}%
+  \advance\pygmented@linenosep@total\mdflength{innerlinewidth}%
+  \advance\pygmented@linenosep@total\mdflength{innerleftmargin}%
   \makebox[0pt][r]{%
     \FormatLineNumber{#1}%
-    \hspace*{\pygmented@linenosep}}}
+    \hspace*{\pygmented@linenosep@total}}}
 
 \newcommand\myframed[2][]{%
   \pygmented@leftmargin\z@
@@ -298,22 +296,29 @@
     %\advance\pygmented@leftmargin\pygmented@opt@framesep
     %
     \pygmented@linenosep\pygmented@opt@numbersep
-    \ifpygmented@left\advance\pygmented@linenosep\pygmented@opt@framerule\fi
-    \advance\pygmented@linenosep\pygmented@opt@framesep
-  \else
-    \pygmented@leftmargin\z@
+%    \ifpygmented@left
+%      \advance\pygmented@linenosep\pygmented@opt@framerule
+%    \fi
+%    \advance\pygmented@linenosep\pygmented@opt@framesep
+  % \else
+  %   \pygmented@leftmargin\z@
   \fi
   %
-  \ifdefined\pygmented@opt@caption
-    \ifdefined\pygmented@opt@label
-      \def\pygmented@title{\captionof{code}{\label{\pygmented@opt@label}\pygmented@opt@caption}\vskip-\baselineskip}%
-    \else
-      \def\pygmented@title{\captionof{code}{\pygmented@opt@caption}\vskip-\baselineskip}%
-    \fi
-    \def\pygmented@remaining@options{#1,title=\pygmented@title}%
+  \ifdefined\pygmented@opt@label
+    \def\pygmented@title{%
+      \captionof{code}{\label{\pygmented@opt@label}\pygmented@opt@caption}%
+      \vskip-0.7\baselineskip}%
   \else
-    \def\pygmented@remaining@options{#1}%
+    \ifdefined\pygmented@opt@caption
+      \def\pygmented@title{%
+        \captionof{code}{\pygmented@opt@caption}%
+        \vskip-0.7\baselineskip}%
+    \fi
   \fi
+  \ifdefined\pygmented@title
+    \pygmented@title
+  \fi
+  \def\pygmented@remaining@options{#1}%
   %
   %\noindent
   \call@with@saved@options{\mdframed}{\pygmented@remaining@options}{%
