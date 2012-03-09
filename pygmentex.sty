@@ -53,6 +53,9 @@
 % fancyvrb new commands to append to a file
 % =========================================================
 
+% See http://tex.stackexchange.com/questions/47462/inputenc-error-with-unicode-chars-and-verbatim
+\long\def\unexpanded@write#1#2{\write#1{\unexpanded{#2}}}
+
 \def\VerbatimOutAppend{\FV@Environment{}{VerbatimOutAppend}}
 
 \def\FVB@VerbatimOutAppend#1{%
@@ -62,7 +65,7 @@
     \FV@DefineWhiteSpace
     \def\FV@Space{\space}%
     \FV@DefineTabOut
-    \def\FV@ProcessLine{\immediate\write#1}%
+    \def\FV@ProcessLine{\immediate\unexpanded@write#1}%
     \let\FV@FontScanPrep\relax
     \let\@noligs\relax
     \FV@Scan
@@ -344,12 +347,12 @@
 % =========================================================
 
 \AtEndOfPackage{%
-  \immediate\openout\pygmented@outfile\jobname.snippets%
   \IfFileExists{\jobname.pygmented}{%
     \input{\jobname.pygmented}%
   }{%
     \PackageWarning{pygmentex}{File `\jobname.pygmented' not found.}%
   }%
+  \immediate\openout\pygmented@outfile\jobname.snippets%
 }
 
 \AtEndDocument{%
