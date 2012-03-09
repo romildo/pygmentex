@@ -1,0 +1,69 @@
+    \NeedsTeXFormat{LaTeX2e}
+
+    \ProvidesPackage{testenv}[2012/03/10 v0.1 JRM test environment]
+
+    \RequirePackage{fancyvrb}
+
+    % =========================================================
+    % fancyvrb new commands to append to a file
+    % =========================================================
+
+    \long\def\unexpanded@write#1#2{\write#1{\unexpanded{#2}}}
+
+
+    \def\VerbatimOutAppend{\FV@Environment{}{VerbatimOutAppend}}
+
+    \def\FVB@VerbatimOutAppend#1{%
+      \@bsphack
+      \begingroup
+        \FV@UseKeyValues
+        \FV@DefineWhiteSpace
+        \def\FV@Space{\space}%
+        \FV@DefineTabOut
+        \def\FV@ProcessLine{\immediate\unexpanded@write#1}%
+        \let\FV@FontScanPrep\relax
+        \let\@noligs\relax
+        \FV@Scan
+    }
+
+    \def\FVE@VerbatimOutAppend{%
+      \endgroup
+      \@esphack
+    }
+
+    \DefineVerbatimEnvironment{VerbatimOutAppend}{VerbatimOutAppend}{}
+
+    % =========================================================
+    % my test environment
+    % =========================================================
+
+    \newwrite\testenv@outfile
+
+    \newenvironment{testenv}{%
+      \immediate\write\testenv@outfile{\noexpand\def\noexpand\testenvcommand\@charlb}%
+      \VerbatimEnvironment
+      \begin{VerbatimOutAppend}{\testenv@outfile}%
+    }{%
+      \end{VerbatimOutAppend}%
+      \immediate\write\testenv@outfile{\@charrb}%
+      \ifdefined\testenvcommand\testenvcommand\fi
+    }
+
+    % =========================================================
+    % final actions
+    % =========================================================
+
+    \AtEndOfPackage{%
+      \IfFileExists{\jobname.testenv}{%
+        \input{\jobname.testenv}%
+      }{%
+        \PackageWarning{testenv}{File `\jobname.testenv' not found.}%
+      }%
+      \immediate\openout\testenv@outfile\jobname.testenv%
+    }
+
+    \AtEndDocument{%
+      \closeout\testenv@outfile%
+    }
+
+    \endinput
