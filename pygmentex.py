@@ -25,14 +25,24 @@ sys.path.append('/tmp/Pygments-1.4')
 from pygments import highlight, lex, format
 from pygments.styles import get_style_by_name
 from pygments.lexers import get_lexer_by_name
-from pygments.formatters.latex import LatexFormatter, escape_tex, _get_ttype_name
+from pygments.formatters.latex import LatexFormatter, _get_ttype_name
+from pygments.formatters.latex import escape_tex as escape_tex_orig
 from pygments.util import get_bool_opt, get_int_opt
 from pygments.lexer import Lexer
 from pygments.token import Token
 
+def escape_tex(text, commandprefix):
+    return escape_tex_orig(text, commandprefix) \
+            .replace('-', r'\%sZhy{}' % commandprefix) \
+            .replace("'", r'\%sZsq{}' % commandprefix) \
+            .replace('"', r'\%sZdq{}' % commandprefix)
 
-# Escape = Token.Escape
-# STANDARD_TYPES[Escape] = 'esc'
+MORE_STYLE_TEMPLATE = r'''
+\def\%(cp)sZhy{\char`\-}
+\def\%(cp)sZsq{\char`\'}
+\def\%(cp)sZdq{\char`\"}
+\makeatother
+'''
 
 class LatexEmbededLexer(Lexer):
     r"""
@@ -105,6 +115,11 @@ class EnhancedLatexFormatter(LatexFormatter):
         self.escapeinside = ''
         self.left = None
         self.right = None
+
+    def get_style_defs(self, arg=''):
+        return super(EnhancedLatexFormatter, self).get_style_defs() \
+                 .replace(r'\makeatother',
+                          MORE_STYLE_TEMPLATE % {'cp': self.commandprefix})
 
     def format_unencoded(self, tokensource, outfile):
         # TODO: add support for background colors
