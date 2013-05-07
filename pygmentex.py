@@ -12,7 +12,7 @@
     :license: BSD, see LICENSE for details
 """
 
-__version__ = '0.5'
+__version__ = '0.6'
 __docformat__ = 'restructuredtext'
 
 import sys
@@ -26,23 +26,9 @@ from pygments import highlight, lex, format
 from pygments.styles import get_style_by_name
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters.latex import LatexFormatter, _get_ttype_name
-from pygments.formatters.latex import escape_tex as escape_tex_orig
 from pygments.util import get_bool_opt, get_int_opt
 from pygments.lexer import Lexer
 from pygments.token import Token
-
-def escape_tex(text, commandprefix):
-    return escape_tex_orig(text, commandprefix) \
-            .replace('-', r'\%sZhy{}' % commandprefix) \
-            .replace("'", r'\%sZsq{}' % commandprefix) \
-            .replace('"', r'\%sZdq{}' % commandprefix)
-
-MORE_STYLE_TEMPLATE = r'''
-\def\%(cp)sZhy{\char`\-}
-\def\%(cp)sZsq{\char`\'}
-\def\%(cp)sZdq{\char`\"}
-\makeatother
-'''
 
 class LatexEmbededLexer(Lexer):
     r"""
@@ -104,22 +90,17 @@ class LatexEmbededLexer(Lexer):
 
 class EnhancedLatexFormatter(LatexFormatter):
     r"""
-
     This is an enhanced LaTeX formatter.
     """
 
     name = 'EnhancedLaTeX'
+    aliases = []
 
     def __init__(self, **options):
         LatexFormatter.__init__(self, **options)
         self.escapeinside = ''
         self.left = None
         self.right = None
-
-    def get_style_defs(self, arg=''):
-        return super(EnhancedLatexFormatter, self).get_style_defs() \
-                 .replace(r'\makeatother',
-                          MORE_STYLE_TEMPLATE % {'cp': self.commandprefix})
 
     def format_unencoded(self, tokensource, outfile):
         # TODO: add support for background colors
@@ -130,17 +111,17 @@ class EnhancedLatexFormatter(LatexFormatter):
             realoutfile = outfile
             outfile = StringIO()
 
-        outfile.write(r'\begin{Verbatim}[commandchars=\\\{\}')
+        outfile.write(ur'\begin{Verbatim}[commandchars=\\\{\}')
         if self.linenos:
             start, step = self.linenostart, self.linenostep
-            outfile.write(',numbers=left' +
-                          (start and ',firstnumber=%d' % start or '') +
-                          (step and ',stepnumber=%d' % step or ''))
+            outfile.write(u',numbers=left' +
+                          (start and u',firstnumber=%d' % start or u'') +
+                          (step and u',stepnumber=%d' % step or u''))
         if self.mathescape or self.texcomments or self.escapeinside:
-            outfile.write(r',codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}')
+            outfile.write(ur',codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}')
         if self.verboptions:
-            outfile.write(',' + self.verboptions)
-        outfile.write(']\n')
+            outfile.write(u',' + self.verboptions)
+        outfile.write(u']\n')
 
         for ttype, value in tokensource:
             if ttype in Token.Comment:
@@ -203,7 +184,7 @@ class EnhancedLatexFormatter(LatexFormatter):
             else:
                 outfile.write(value)
 
-        outfile.write('\\end{Verbatim}\n')
+        outfile.write(u'\\end{Verbatim}\n')
 
         if self.full:
             realoutfile.write(DOC_TEMPLATE %
