@@ -503,7 +503,6 @@ def main(args = sys.argv):
         return 2
     infn = args[0]
     try:
-        print infn
         code = open(infn, 'rb').read()
     except Exception, err:
         print >>sys.stderr, 'Error: cannot read input file:', err
