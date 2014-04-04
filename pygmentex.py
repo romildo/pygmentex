@@ -109,14 +109,14 @@ class EnhancedLatexFormatter(LatexFormatter):
             realoutfile = outfile
             outfile = StringIO()
 
-        outfile.write(ur'\begin{Verbatim}[commandchars=\\\{\}')
+        outfile.write(r'\begin{Verbatim}[commandchars=\\\{\}')
         if self.linenos:
             start, step = self.linenostart, self.linenostep
             outfile.write(u',numbers=left' +
                           (start and u',firstnumber=%d' % start or u'') +
                           (step and u',stepnumber=%d' % step or u''))
         if self.mathescape or self.texcomments or self.escapeinside:
-            outfile.write(ur',codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}')
+            outfile.write(r',codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}')
         if self.verboptions:
             outfile.write(u',' + self.verboptions)
         outfile.write(u']\n')
