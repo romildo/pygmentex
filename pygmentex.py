@@ -235,8 +235,9 @@ DISPLAY_LINENOS_SNIPPET_TEMPLATE = r'''
 def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
     try:
         lexer = get_lexer_by_name(opts['lang'])
-    except ClassNotFound, err:
-        print >>sys.stderr, 'Error:', err
+    except ClassNotFound as err:
+        sys.stderr.write('Error: ')
+        sys.stderr.write(str(err))
         return ""
 
     # global _fmter
@@ -416,8 +417,9 @@ def convert(code, outfile):
         if m:
             try:
                 filecontents = open(m.group(3), 'rb').read()
-            except Exception, err:
-                print >>sys.stderr, 'Error: cannot read input file:', err
+            except Exception as err:
+                sys.stderr.write('Error: cannot read input file: ')
+                sys.stderr.write(str(err))
             else:
                 pyg(outfile,
                     m.group(1),
@@ -428,7 +430,7 @@ def convert(code, outfile):
             pos = m.end()
             continue
 
-        print >>sys.stderr, 'Error: invalid input file contents: ignoring'
+        sys.stderr.write('Error: invalid input file contents: ignoring')
         break
 
     outfile.write(GENERIC_DEFINITIONS_2)
@@ -468,33 +470,34 @@ def main(args = sys.argv):
 
     try:
         popts, args = getopt.getopt(args[1:], 'e:o:hV')
-    except getopt.GetoptError, err:
-        print >>sys.stderr, usage
+    except getopt.GetoptError as err:
+        sys.stderr.write(usage)
         return 2
     opts = {}
     for opt, arg in popts:
         opts[opt] = arg
 
     if not opts and not args:
-        print usage
+        print(usage)
         return 0
 
     if opts.pop('-h', None) is not None:
-        print usage
+        print(usage)
         return 0
 
     if opts.pop('-V', None) is not None:
-        print 'PygmenTeX version %s, (c) 2010 by José Romildo.' % __version__
+        print('PygmenTeX version %s, (c) 2010 by José Romildo.' % __version__)
         return 0
  
     if len(args) != 1:
-        print >>sys.stderr, usage
+        sys.stderr.write(usage)
         return 2
     infn = args[0]
     try:
         code = open(infn, 'rb').read()
-    except Exception, err:
-        print >>sys.stderr, 'Error: cannot read input file:', err
+    except Exception as err:
+        sys.stderr.write('Error: cannot read input file: ')
+        sys.stderr.write(str(err))
         return 1
 
     outfn = opts.pop('-o', None)
@@ -502,9 +505,10 @@ def main(args = sys.argv):
         root, ext = splitext(infn)
         outfn = root + '.pygmented'
     try:
-        outfile = open(outfn, 'wb')
-    except Exception, err:
-        print >>sys.stderr, 'Error: cannot open output file:', err
+        outfile = open(outfn, 'w')
+    except Exception as err:
+        sys.stderr.write('Error: cannot open output file: ')
+        sys.stderr.write(str(err))
         return 1
 
     convert(code, outfile)
