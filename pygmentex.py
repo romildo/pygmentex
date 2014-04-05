@@ -194,17 +194,6 @@ class EnhancedLatexFormatter(LatexFormatter):
                      code      = outfile.getvalue()))
 
 
-
-# _fmter = EnhancedLatexFormatter()
-
-def get_style():
-    return """
-\NeedsTeXFormat{LaTeX2e}
-\RequirePackage{fancyvrb}
-\RequirePackage{color}
-    """ + _fmter.get_style_defs()
-
-
 GENERIC_DEFINITIONS_1 = r'''% -*- mode: latex -*-
 
 \makeatletter
