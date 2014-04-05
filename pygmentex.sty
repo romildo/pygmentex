@@ -137,7 +137,7 @@
 \pgfkeys{%
   /pygmented/.cd,
   %
-  .unknown/.code         = {\pgfkeys@unknown@handler{\test@unknown}{#1}},
+  .unknown/.code         = {\pgfkeys@unknown@handler{\pygmented@unknown}{#1}},
   %
   lang/.store in         = \pygmented@opt@lang,
   style/.store in        = \pygmented@opt@style,
@@ -201,7 +201,7 @@
 
 \newcommand\inputpygmented[2][]{%
   \begingroup
-    \def\test@unknown{}%
+    \def\pygmented@unknown{}%
     \pgfqkeys@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
     \immediate\write\pygmented@outfile{<@@pygmented@input@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
@@ -214,7 +214,7 @@
 }
 
 \newenvironment{pygmented}[1][]{%
-  \def\test@unknown{}%
+  \def\pygmented@unknown{}%
   \pgfqkeys@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
   \fvset{tabsize=\pygmented@opt@tabsize}%
   \immediate\write\pygmented@outfile{<@@pygmented@display@\the\pygmented@counter}%
@@ -230,7 +230,7 @@
 
 \newcommand\pyginline[2][]{%
   \begingroup
-    \def\test@unknown{}%
+    \def\pygmented@unknown{}%
     \pgfqkeys@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
     \immediate\write\pygmented@outfile{<@@pygmented@inline@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
@@ -258,7 +258,7 @@
   \begingroup
     \csname PYstyle\pygmented@opt@style\endcsname
     \pygmented@opt@font
-    \call@with@saved@options{#1}{\test@unknown}{%
+    \call@with@saved@options{#1}{\pygmented@unknown}{%
       font=\pygmented@opt@font,%
       % frame=\pygmented@opt@frame,%
       % framerule=\pygmented@opt@framerule,%
@@ -310,12 +310,12 @@
   \ifdefined\pygmented@opt@label
     \def\pygmented@title{%
       \captionof{code}{\label{\pygmented@opt@label}\pygmented@opt@caption}%
-      \vskip-0.7\baselineskip}%
+      \vskip -0.7\baselineskip}%
   \else
     \ifdefined\pygmented@opt@caption
       \def\pygmented@title{%
         \captionof{code}{\pygmented@opt@caption}%
-        \vskip-0.7\baselineskip}%
+        \vskip -0.7\baselineskip}%
     \fi
   \fi
   \ifdefined\pygmented@title
