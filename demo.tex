@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[10pt]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -7,7 +7,11 @@
 \usepackage{hyperref}
 \usepackage[framemethod=tikz]{mdframed}
 \usepackage{pygmentex}
+\usepackage{tcolorbox}
+\usepackage{boites,boiteenv}
+\usepackage{fvrb-ex}
 
+\fvset{gobble=0,frame=lines,framerule=1pt,numbers=left,fontsize=\small}
 
 \definecolor{shadecolor}{rgb}{0.9,0.9,0.9}
 \definecolor{lightgreen}{rgb}{0.8,0.95,0.8}
@@ -71,10 +75,13 @@ included to produce the final typeset document.
 
 See listing \ref{lst:a} for an example.
 
-\begin{pygmented}[
+\begin{Example}
+\begin{pygmented}[boxing method=mdframed,
   lang=scheme,
   linenos,
-  backgroundcolor=shadecolor,
+  firstline=10001,
+  numbersep=2cm,
+  backgroundcolor=red!16,
   label=lst:a,
   caption=A \textsl{Scheme} program.,
   ]
@@ -84,6 +91,43 @@ See listing \ref{lst:a} for an example.
             1
             (* n (fact (- n 1))))))
 \end{pygmented}
+\end{Example}
+
+\begin{Example}
+\begin{pygmented}[boxing method=tcolorbox,
+  lang=scheme,
+  linenos,
+  firstline=10001,
+  numbersep=2cm,
+  colback=green!16,
+  label=lst:b,
+  caption=A \textsl{Scheme} program.,
+  ]
+(define fact
+    (lambda (n)
+        (if (= n 0)
+            1
+            (* n (fact (- n 1))))))
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+\begin{pygmented}[boxing method=boite,
+  lang=scheme,
+  linenos,
+  firstline=10001,
+  numbersep=2cm,
+  colback=yellow!16,
+  label=lst:c,
+  caption=A \textsl{Scheme} program.,
+  ]
+(define fact
+    (lambda (n)
+        (if (= n 0)
+            1
+            (* n (fact (- n 1))))))
+\end{pygmented}
+\end{Example}
 
 
 \section{Inline code snippets}
