@@ -291,7 +291,7 @@
 }
 
 
-\newenvironment{pygmentex@boxing}[1][]%
+\newenvironment{pygmented@boxing}[1][]%
   {\begin{\pygmented@opt@boxing@method}[#1]}%
   {\end{\pygmented@opt@boxing@method}}%
 
@@ -362,9 +362,9 @@
       \csname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname,%
     \fi
   }%
-  \expandafter\pygmentex@boxing\expandafter[\pygmented@saved@ #1]%
+  \expandafter\pygmented@boxing\expandafter[\pygmented@saved@ #1]%
   \noindent#2%
-  \endpygmentex@boxing
+  \endpygmented@boxing
 }
 
 
