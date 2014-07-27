@@ -2,7 +2,7 @@
 
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{pygmentex}[2013/05/07 v0.6 A Pygmentex layer for LaTeX]
+\ProvidesPackage{pygmentex}[2014/07/27 v0.7 A Pygmentex layer for LaTeX]
 
 \RequirePackage{fancyvrb}
 \RequirePackage{color}
@@ -11,8 +11,6 @@
 \RequirePackage{caption}
 \RequirePackage{pgfkeys}
 \RequirePackage{efbox}
-% \RequirePackage{myframed}
-% \RequirePackage{maboites}
 \RequirePackage[framemethod=tikz]{mdframed}
 
 %\DeclareCaptionType[within=chapter]{code}[Listagem][Lista de listagens]
@@ -137,50 +135,52 @@
 \pgfkeys{%
   /pygmented/.cd,
   %
-  .unknown/.code         = {\pgfkeys@unknown@handler{\pygmented@unknown}{#1}},
+  .unknown/.code          = {\pgfkeys@unknown@handler{\pygmented@unknown}{#1}},
   %
-  lang/.store in         = \pygmented@opt@lang,
-  style/.store in        = \pygmented@opt@style,
-  escapeinside/.store in = \pygmented@opt@escapeinside,
-  texcl/.is if           = pygmented@opt@texcl,
-  mathescape/.is if      = pygmented@opt@mathescape,
-  linenos/.is if         = pygmented@opt@linenos,
-  linenostart/.store in  = \pygmented@opt@linenostart,
-  linenostep/.store in   = \pygmented@opt@linenostep,
-  gobble/.store in       = \pygmented@opt@gobble,
-  numbers/.is if         = pygmented@opt@numbers,
-  firstnumber/.store in  = \pygmented@opt@firstnumber,
-  stepnumber/.store in   = \pygmented@opt@stepnumber,
-  numbersep/.store in    = \pygmented@opt@numbersep,
-  font/.store in         = \pygmented@opt@font,
-  framesep/.store in     = \pygmented@opt@framesep,
-  framerule/.store in    = \pygmented@opt@framerule,
-  firstline/.store in    = \pygmented@opt@firstline,
-  lastline/.store in     = \pygmented@opt@lastline,
-  tabsize/.store in      = \pygmented@opt@tabsize,
+  lang/.store in          = \pygmented@opt@lang,
+  style/.store in         = \pygmented@opt@style,
+  escapeinside/.store in  = \pygmented@opt@escapeinside,
+  texcl/.is if            = pygmented@opt@texcl,
+  mathescape/.is if       = pygmented@opt@mathescape,
+  linenos/.is if          = pygmented@opt@linenos,
+  linenostart/.store in   = \pygmented@opt@linenostart,
+  linenostep/.store in    = \pygmented@opt@linenostep,
+  gobble/.store in        = \pygmented@opt@gobble,
+  numbers/.is if          = pygmented@opt@numbers,
+  firstnumber/.store in   = \pygmented@opt@firstnumber,
+  stepnumber/.store in    = \pygmented@opt@stepnumber,
+  numbersep/.store in     = \pygmented@opt@numbersep,
+  font/.store in          = \pygmented@opt@font,
+  framesep/.store in      = \pygmented@opt@framesep,
+  framerule/.store in     = \pygmented@opt@framerule,
+  firstline/.store in     = \pygmented@opt@firstline,
+  lastline/.store in      = \pygmented@opt@lastline,
+  tabsize/.store in       = \pygmented@opt@tabsize,
   frame/.is choice,
-  frame/none/.code       = {\def\pygmented@opt@frame{none}\pygmented@leftfalse\pygmented@rightfalse},
-  frame/lines/.code      = {\def\pygmented@opt@frame{lines}\pygmented@leftfalse\pygmented@rightfalse},
-  frame/single/.code     = {\def\pygmented@opt@frame{single}\pygmented@lefttrue\pygmented@righttrue},
-  label/.store in        = \pygmented@opt@label,
-  caption/.store in      = \pygmented@opt@caption,
+  frame/none/.code        = {\def\pygmented@opt@frame{none}\pygmented@leftfalse\pygmented@rightfalse},
+  frame/lines/.code       = {\def\pygmented@opt@frame{lines}\pygmented@leftfalse\pygmented@rightfalse},
+  frame/single/.code      = {\def\pygmented@opt@frame{single}\pygmented@lefttrue\pygmented@righttrue},
+  boxing method/.store in = \pygmented@opt@boxing@method,
+  label/.store in         = \pygmented@opt@label,
+  caption/.store in       = \pygmented@opt@caption,
   %
-  texcl/.default         = true,
-  mathescape/.default    = true,
-  linenos/.default       = true,
-  numbers/.default       = true,
-  frame/.default         = single,
+  texcl/.default          = true,
+  mathescape/.default     = true,
+  linenos/.default        = true,
+  numbers/.default        = true,
+  frame/.default          = single,
 }
 
 \pgfqkeys{/pygmented}{
-  style      = default,
-  framerule  = \fboxrule,
-  framesep   = \fboxsep,
-  linenos    = false,
-  numbersep  = 2pt,
-  font       = \ttfamily,
-  frame      = none,
-  tabsize    = 8,
+  style         = default,
+  framerule     = \fboxrule,
+  framesep      = \fboxsep,
+  linenos       = false,
+  numbersep     = 2pt,
+  font          = \ttfamily,
+  frame         = none,
+  tabsize       = 8,
+  boxing method = mdframed,
 }
 
 % \pygmented@define@switch{extra}{numberblanklines}
@@ -250,22 +250,24 @@
 
 
 
-
+% Macro to typeset an already pygmented snippet of code.
+% It is created by the pygmentex program.
+%
 % #1 => macro to further typeset the snippet body
 % #2 => snippet body
 
 \def\pygmented@snippet@do#1#2{%
   \begingroup
-    \csname PYstyle\pygmented@opt@style\endcsname
-    \pygmented@opt@font
     \call@with@saved@options{#1}{\pygmented@unknown}{%
-      font=\pygmented@opt@font,%
+      %font=\pygmented@opt@font,%
       % frame=\pygmented@opt@frame,%
       % framerule=\pygmented@opt@framerule,%
       % framesep=\pygmented@opt@framesep%
     }{%
+      \csname PYstyle\pygmented@opt@style\endcsname
       \pygmented@opt@font
-      #2}%
+      #2%
+    }%
   \endgroup
 }
 
@@ -278,33 +280,66 @@
 
 \newdimen\pygmented@leftmargin
 \newdimen\pygmented@linenosep
-\newdimen\pygmented@linenosep@total
 
 \def\pygmented@lineno@do#1{%
-  \pygmented@linenosep@total\pygmented@linenosep
-  \advance\pygmented@linenosep@total\mdflength{outerlinewidth}%
-  \advance\pygmented@linenosep@total\mdflength{middlelinewidth}%
-  \advance\pygmented@linenosep@total\mdflength{innerlinewidth}%
-  \advance\pygmented@linenosep@total\mdflength{innerleftmargin}%
+  \pygmented@linenosep 0pt%
+  \csname pygmented@\pygmented@opt@boxing@method @margin\endcsname
+  \advance \pygmented@linenosep \pygmented@opt@numbersep
   \makebox[0pt][r]{%
     \FormatLineNumber{#1}%
-    \hspace*{\pygmented@linenosep@total}}}
+    \hspace*{\pygmented@linenosep}}
+}
 
+
+\newenvironment{pygmentex@boxing}[1][]%
+  {\begin{\pygmented@opt@boxing@method}[#1]}%
+  {\end{\pygmented@opt@boxing@method}}%
+
+
+\newcommand{\pygmented@mdframed@additional@options}{%
+  roundcorner=5pt,%
+  leftmargin=\pygmented@leftmargin,%
+}
+
+\newcommand{\pygmented@tcolorbox@additional@options}{%@total
+  arc=5pt,%
+  grow to left by=-\pygmented@leftmargin,%
+}
+
+\newcommand{\pygmented@boite@additional@options}{%
+  arc=5pt,%
+  leftmargin=\pygmented@leftmargin,%
+}
+
+
+\newcommand\pygmented@mdframed@margin{%
+  \advance \pygmented@linenosep \mdflength{outerlinewidth}%
+  \advance \pygmented@linenosep \mdflength{middlelinewidth}%
+  \advance \pygmented@linenosep \mdflength{innerlinewidth}%
+  \advance \pygmented@linenosep \mdflength{innerleftmargin}%
+}
+
+\newcommand\pygmented@tcolorbox@margin{%
+  \advance \pygmented@linenosep \kvtcb@left@rule
+  \advance \pygmented@linenosep \kvtcb@leftupper
+  \advance \pygmented@linenosep \kvtcb@boxsep
+}
+
+\newcommand\pygmented@boite@margin{%
+  \advance \pygmented@linenosep \boite@leftrule
+  \advance \pygmented@linenosep \boite@boxsep
+}
+
+
+
+% Macro to typeset framed snippets
+% #1 => options
+% #2 => snippet
 \newcommand\myframed[2][]{%
   \pygmented@leftmargin\z@
   \ifpygmented@opt@linenos
     \expandafter\widest\pygmented@alllinenos{\FormatLineNumber}{\pygmented@leftmargin}%
     \advance\pygmented@leftmargin\pygmented@opt@numbersep
-    %\advance\pygmented@leftmargin\pygmented@opt@framerule
-    %\advance\pygmented@leftmargin\pygmented@opt@framesep
-    %
-    \pygmented@linenosep\pygmented@opt@numbersep
-%    \ifpygmented@left
-%      \advance\pygmented@linenosep\pygmented@opt@framerule
-%    \fi
-%    \advance\pygmented@linenosep\pygmented@opt@framesep
-  % \else
-  %   \pygmented@leftmargin\z@
   \fi
   %
   \ifdefined\pygmented@opt@label
@@ -321,17 +356,15 @@
   \ifdefined\pygmented@title
     \pygmented@title
   \fi
-  \def\pygmented@remaining@options{#1}%
   %
-  %\noindent
-  \call@with@saved@options{\mdframed}{\pygmented@remaining@options}{%
-  % \call@with@saved@options{\maboite}{\pygmented@remaining@options}{%
-  % \call@with@saved@options{\myframed}{\pygmented@remaining@options}{%
-      leftmargin=\pygmented@leftmargin,%
-    }{\noindent#2}%
-  % \endmyframed
-  % \endmaboite
-  \endmdframed
+  \edef\pygmented@saved@{%
+    \ifcsname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname
+      \csname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname,%
+    \fi
+  }%
+  \expandafter\pygmentex@boxing\expandafter[\pygmented@saved@ #1]%
+  \noindent#2%
+  \endpygmentex@boxing
 }
 
 
