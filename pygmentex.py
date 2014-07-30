@@ -338,7 +338,7 @@ def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
                 dict(number      = n,
                      style       = stylename,
                      options     = extra_opts,
-                     numbersep   = opts['numbersep'],
+                     linenosep   = opts['linenosep'],
                      linenumbers = ','.join(numbers),
                      body        = '\\newline\n'.join(lines)))
 
@@ -376,7 +376,7 @@ def convert(code, outfile):
 
     opts = { 'lang'      : 'c',
              'style'     : 'default',
-             'numbersep' : '0pt',
+             'linenosep' : '0pt',
              'tabsize'   : '8',
              'encoding'  : 'guess',
            }

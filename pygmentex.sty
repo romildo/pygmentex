@@ -128,39 +128,45 @@
 \newif\ifpygmented@opt@texcl
 \newif\ifpygmented@opt@mathescape
 \newif\ifpygmented@opt@linenos
-\newif\ifpygmented@opt@numbers
 \newif\ifpygmented@left
 \newif\ifpygmented@right
 
+% some settings used by fancyvrb:
+% * for line numbering:
+%     numbers, numbersep, firstnumber, stepnumber, numberblanklines
+% * for selection of lines to print:
+%     firstline, lastline,
+
 \pgfkeys{%
   /pygmented/.cd,
-  %
-  % .unknown/.code          = {\pgfkeys@unknown@handler{\pygmented@unknown}{#1}},
-  %
   lang/.store in          = \pygmented@opt@lang,
   style/.store in         = \pygmented@opt@style,
   escapeinside/.store in  = \pygmented@opt@escapeinside,
   texcl/.is if            = pygmented@opt@texcl,
   mathescape/.is if       = pygmented@opt@mathescape,
+  % 
+  gobble/.store in        = \pygmented@opt@gobble,
+  % 
   linenos/.is if          = pygmented@opt@linenos,
   linenostart/.store in   = \pygmented@opt@linenostart,
   linenostep/.store in    = \pygmented@opt@linenostep,
-  gobble/.store in        = \pygmented@opt@gobble,
-  numbers/.is if          = pygmented@opt@numbers,
-  firstnumber/.store in   = \pygmented@opt@firstnumber,
-  stepnumber/.store in    = \pygmented@opt@stepnumber,
-  numbersep/.store in     = \pygmented@opt@numbersep,
+  linenosep/.store in     = \pygmented@opt@linenosep,
+  % 
   font/.store in          = \pygmented@opt@font,
+  % 
   framesep/.store in      = \pygmented@opt@framesep,
   framerule/.store in     = \pygmented@opt@framerule,
   firstline/.store in     = \pygmented@opt@firstline,
   lastline/.store in      = \pygmented@opt@lastline,
   tabsize/.store in       = \pygmented@opt@tabsize,
+  % 
   frame/.is choice,
   frame/none/.code        = {\def\pygmented@opt@frame{none}\pygmented@leftfalse\pygmented@rightfalse},
   frame/lines/.code       = {\def\pygmented@opt@frame{lines}\pygmented@leftfalse\pygmented@rightfalse},
   frame/single/.code      = {\def\pygmented@opt@frame{single}\pygmented@lefttrue\pygmented@righttrue},
+  % 
   boxing method/.store in = \pygmented@opt@boxing@method,
+  % 
   label/.store in         = \pygmented@opt@label,
   caption/.store in       = \pygmented@opt@caption,
   %
@@ -169,7 +175,6 @@
   texcl/.default          = true,
   mathescape/.default     = true,
   linenos/.default        = true,
-  numbers/.default        = true,
   frame/.default          = single,
 }
 
@@ -179,7 +184,7 @@
   framerule     = \fboxrule,
   framesep      = \fboxsep,
   linenos       = false,
-  numbersep     = 2pt,
+  linenosep     = 2pt,
   font          = \ttfamily,
   frame         = none,
   tabsize       = 8,
@@ -307,7 +312,7 @@
   \pygmented@leftmargin\z@
   \ifpygmented@opt@linenos
     \expandafter\widest\pygmented@alllinenos{\FormatLineNumber}{\pygmented@leftmargin}%
-    \advance\pygmented@leftmargin\pygmented@opt@numbersep
+    \advance\pygmented@leftmargin\pygmented@opt@linenosep
   \fi
   %
   \ifdefined\pygmented@opt@label
@@ -360,7 +365,7 @@
 \def\pygmented@lineno@do#1{%
   \pygmented@linenosep 0pt%
   \csname pygmented@\pygmented@opt@boxing@method @margin\endcsname
-  \advance \pygmented@linenosep \pygmented@opt@numbersep
+  \advance \pygmented@linenosep \pygmented@opt@linenosep
   \makebox[0pt][r]{%
     \FormatLineNumber{#1}%
     \hspace*{\pygmented@linenosep}}
