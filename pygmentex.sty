@@ -139,45 +139,42 @@
 
 \pgfkeys{%
   /pygmented/.cd,
+  % 
+  boxing method/.store in = \pygmented@opt@boxing@method,
+  % 
   lang/.store in          = \pygmented@opt@lang,
   style/.store in         = \pygmented@opt@style,
   escapeinside/.store in  = \pygmented@opt@escapeinside,
   texcl/.is if            = pygmented@opt@texcl,
   mathescape/.is if       = pygmented@opt@mathescape,
+  %
+  colback/.store in       = \pygmented@opt@colback,
+  font/.store in          = \pygmented@opt@font,
+  % 
+  label/.store in         = \pygmented@opt@label,
+  caption/.store in       = \pygmented@opt@caption,
   % 
   gobble/.store in        = \pygmented@opt@gobble,
+  tabsize/.store in       = \pygmented@opt@tabsize,
   % 
   linenos/.is if          = pygmented@opt@linenos,
   linenostart/.store in   = \pygmented@opt@linenostart,
   linenostep/.store in    = \pygmented@opt@linenostep,
   linenosep/.store in     = \pygmented@opt@linenosep,
   % 
-  font/.store in          = \pygmented@opt@font,
-  % 
   framesep/.store in      = \pygmented@opt@framesep,
   framerule/.store in     = \pygmented@opt@framerule,
-  firstline/.store in     = \pygmented@opt@firstline,
-  lastline/.store in      = \pygmented@opt@lastline,
-  tabsize/.store in       = \pygmented@opt@tabsize,
   % 
   frame/.is choice,
   frame/none/.code        = {\def\pygmented@opt@frame{none}\pygmented@leftfalse\pygmented@rightfalse},
   frame/lines/.code       = {\def\pygmented@opt@frame{lines}\pygmented@leftfalse\pygmented@rightfalse},
   frame/single/.code      = {\def\pygmented@opt@frame{single}\pygmented@lefttrue\pygmented@righttrue},
-  % 
-  boxing method/.store in = \pygmented@opt@boxing@method,
-  % 
-  label/.store in         = \pygmented@opt@label,
-  caption/.store in       = \pygmented@opt@caption,
-  %
-  colback/.store in       = \pygmented@opt@colback,
   %
   texcl/.default          = true,
   mathescape/.default     = true,
   linenos/.default        = true,
   frame/.default          = single,
 }
-
 
 \pgfqkeys{/pygmented}{
   style         = default,
