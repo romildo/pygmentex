@@ -106,12 +106,12 @@
   \expandafter\push\expandafter#1\expandafter{\key@value}%
 }
 
-\newcommand*\pgfqkeys@with@saved@options[3]{%
+\newcommand*\pgfqkeysfiltered@with@saved@options[3]{%
   % #1 => path
   % #2 => macro holding saved options
   % #3 => keys
-  \def\@pgfqkeys@##1{\pgfqkeys{#1}{##1}}%
-  \expandafter\@pgfqkeys@\expandafter{#2,#3}%
+  \def\@pgfqkeysfiltered@##1{\pgfqkeysfiltered{#1}{##1}}%
+  \expandafter\@pgfqkeysfiltered@\expandafter{#2,#3}%
 }
 
 \newcommand*\call@with@saved@options[3]{%
@@ -135,7 +135,7 @@
 \pgfkeys{%
   /pygmented/.cd,
   %
-  .unknown/.code          = {\pgfkeys@unknown@handler{\pygmented@unknown}{#1}},
+  % .unknown/.code          = {\pgfkeys@unknown@handler{\pygmented@unknown}{#1}},
   %
   lang/.store in          = \pygmented@opt@lang,
   style/.store in         = \pygmented@opt@style,
@@ -164,12 +164,15 @@
   label/.store in         = \pygmented@opt@label,
   caption/.store in       = \pygmented@opt@caption,
   %
+  colback/.store in       = \pygmented@opt@colback,
+  %
   texcl/.default          = true,
   mathescape/.default     = true,
   linenos/.default        = true,
   numbers/.default        = true,
   frame/.default          = single,
 }
+
 
 \pgfqkeys{/pygmented}{
   style         = default,
@@ -201,8 +204,13 @@
 
 \newcommand\inputpygmented[2][]{%
   \begingroup
-    \def\pygmented@unknown{}%
-    \pgfqkeys@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
+    \pgfkeys{%
+      /pgf/key filters/defined/.install key filter,
+      /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
+    }%
+    \def\remainingoptions{}%
+    \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
+    % 
     \immediate\write\pygmented@outfile{<@@pygmented@input@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
     \immediate\write\pygmented@outfile{#2}%
@@ -214,8 +222,15 @@
 }
 
 \newenvironment{pygmented}[1][]{%
-  \def\pygmented@unknown{}%
-  \pgfqkeys@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
+  \pgfkeys{%
+    /pgf/key filters/defined/.install key filter,
+    /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
+  }%
+  \def\remainingoptions{}%
+  \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
+  \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
+  \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
+  % 
   \fvset{tabsize=\pygmented@opt@tabsize}%
   \immediate\write\pygmented@outfile{<@@pygmented@display@\the\pygmented@counter}%
   \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
@@ -230,8 +245,15 @@
 
 \newcommand\pyginline[2][]{%
   \begingroup
-    \def\pygmented@unknown{}%
-    \pgfqkeys@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
+    \pgfkeys{%
+      /pgf/key filters/defined/.install key filter,
+      /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
+    }%
+    \def\remainingoptions{}%
+    \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
+    \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
+    \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
+    % 
     \immediate\write\pygmented@outfile{<@@pygmented@inline@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
     \DefineShortVerb{#2}%
@@ -249,93 +271,39 @@
 }
 
 
-
 % Macro to typeset an already pygmented snippet of code.
 % It is created by the pygmentex program.
 %
 % #1 => macro to further typeset the snippet body
 % #2 => snippet body
-
-\def\pygmented@snippet@do#1#2{%
+%
+\newcommand\pygmented@snippet@inlined[1]{%
   \begingroup
-    \call@with@saved@options{#1}{\pygmented@unknown}{%
-      %font=\pygmented@opt@font,%
-      % frame=\pygmented@opt@frame,%
-      % framerule=\pygmented@opt@framerule,%
-      % framesep=\pygmented@opt@framesep%
-    }{%
-      \csname PYstyle\pygmented@opt@style\endcsname
-      \pygmented@opt@font
-      #2%
-    }%
+  \csname PYstyle\pygmented@opt@style\endcsname
+  \pygmented@opt@font
+  \edef\pygmented@saved@{%
+    \ifcsname pygmented@opt@colback\endcsname
+      backgroundcolor=\pygmented@opt@colback,%
+      % colback=\pygmented@opt@colback,%
+    \fi
+    % nobeforeafter,%
+    % tcbox raise base,%
+    % left=0mm,%
+    % right=0mm,%
+    % top=0mm,%
+    % bottom=0mm,%
+    % boxsep=2pt,%
+    % arc=1pt,%
+    % boxrule=0pt,%
+    \unexpanded\expandafter{\remainingoptions},%
+  }%
+  \expandafter\efbox\expandafter[\pygmented@saved@]{#1}%
+  % \expandafter\tcbox\expandafter[\pygmented@saved@]{#1}%
   \endgroup
 }
 
-
-
-
-
-\def\FormatLineNumber#1{{\rmfamily\tiny#1}}
-
-
-\newdimen\pygmented@leftmargin
-\newdimen\pygmented@linenosep
-
-\def\pygmented@lineno@do#1{%
-  \pygmented@linenosep 0pt%
-  \csname pygmented@\pygmented@opt@boxing@method @margin\endcsname
-  \advance \pygmented@linenosep \pygmented@opt@numbersep
-  \makebox[0pt][r]{%
-    \FormatLineNumber{#1}%
-    \hspace*{\pygmented@linenosep}}
-}
-
-
-\newenvironment{pygmented@boxing}[1][]%
-  {\begin{\pygmented@opt@boxing@method}[#1]}%
-  {\end{\pygmented@opt@boxing@method}}%
-
-
-\newcommand{\pygmented@mdframed@additional@options}{%
-  roundcorner=5pt,%
-  leftmargin=\pygmented@leftmargin,%
-}
-
-\newcommand{\pygmented@tcolorbox@additional@options}{%@total
-  arc=5pt,%
-  grow to left by=-\pygmented@leftmargin,%
-}
-
-\newcommand{\pygmented@boite@additional@options}{%
-  arc=5pt,%
-  leftmargin=\pygmented@leftmargin,%
-}
-
-
-\newcommand\pygmented@mdframed@margin{%
-  \advance \pygmented@linenosep \mdflength{outerlinewidth}%
-  \advance \pygmented@linenosep \mdflength{middlelinewidth}%
-  \advance \pygmented@linenosep \mdflength{innerlinewidth}%
-  \advance \pygmented@linenosep \mdflength{innerleftmargin}%
-}
-
-\newcommand\pygmented@tcolorbox@margin{%
-  \advance \pygmented@linenosep \kvtcb@left@rule
-  \advance \pygmented@linenosep \kvtcb@leftupper
-  \advance \pygmented@linenosep \kvtcb@boxsep
-}
-
-\newcommand\pygmented@boite@margin{%
-  \advance \pygmented@linenosep \boite@leftrule
-  \advance \pygmented@linenosep \boite@boxsep
-}
-
-
-
-% Macro to typeset framed snippets
-% #1 => options
-% #2 => snippet
-\newcommand\myframed[2][]{%
+\newenvironment{pygmented@snippet@framed}{%
+  \begingroup
   \pygmented@leftmargin\z@
   \ifpygmented@opt@linenos
     \expandafter\widest\pygmented@alllinenos{\FormatLineNumber}{\pygmented@leftmargin}%
@@ -361,12 +329,93 @@
     \ifcsname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname
       \csname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname,%
     \fi
+    \unexpanded\expandafter{\remainingoptions},%
   }%
-  \expandafter\pygmented@boxing\expandafter[\pygmented@saved@ #1]%
-  \noindent#2%
-  \endpygmented@boxing
+  \typeout{\string\pygmented@saved@:}\typeout{\meaning\pygmented@saved@}%%%%%%% DEBUGING
+  \expandafter\begin\expandafter{\expandafter\pygmented@opt@boxing@method\expandafter}\expandafter[%
+    \pygmented@saved@
+    ]%
+  \csname PYstyle\pygmented@opt@style\endcsname
+  \pygmented@opt@font
+  % 
+  \noindent
+  }{%
+  \end{\pygmented@opt@boxing@method}%
+  \endgroup
 }
 
+
+\newcommand\pygmented@inlined[1]{%
+  \expandafter\efbox\expandafter[\remainingoptions]{#1}%
+}
+
+
+
+\def\FormatLineNumber#1{{\rmfamily\tiny#1}}
+
+
+\newdimen\pygmented@leftmargin
+\newdimen\pygmented@linenosep
+
+\def\pygmented@lineno@do#1{%
+  \pygmented@linenosep 0pt%
+  \csname pygmented@\pygmented@opt@boxing@method @margin\endcsname
+  \advance \pygmented@linenosep \pygmented@opt@numbersep
+  \makebox[0pt][r]{%
+    \FormatLineNumber{#1}%
+    \hspace*{\pygmented@linenosep}}
+}
+
+% \newenvironment{pygmented@boxing}{%
+%   \expandafter\begin\expandafter{\expandafter\pygmented@opt@boxing@method\expandafter}\expandafter[\remainingoptions]%
+%   }{%
+%   \end{\pygmented@opt@boxing@method}%
+% }%
+
+
+\newcommand\pygmented@mdframed@additional@options{%
+  roundcorner=5pt,%
+  leftmargin=\pygmented@leftmargin,%
+  \ifcsname pygmented@opt@colback\endcsname
+    backgroundcolor=\pygmented@opt@colback,%
+  \fi
+  frametitlerule=true,%
+}
+
+\newcommand\pygmented@tcolorbox@additional@options{%
+  arc=5pt,%
+  grow to left by=-\pygmented@leftmargin,%
+  \ifcsname pygmented@opt@colback\endcsname
+    colback=\pygmented@opt@colback,%
+  \fi
+}
+
+\newcommand\pygmented@boite@additional@options{%
+  arc=5pt,%
+  leftmargin=\pygmented@leftmargin,%
+  \ifcsname pygmented@opt@colback\endcsname
+    colback=\pygmented@opt@colback,%
+  \fi
+}
+
+
+\newcommand\pygmented@mdframed@margin{%
+  \advance \pygmented@linenosep \mdflength{outerlinewidth}%
+  \advance \pygmented@linenosep \mdflength{middlelinewidth}%
+  \advance \pygmented@linenosep \mdflength{innerlinewidth}%
+  \advance \pygmented@linenosep \mdflength{innerleftmargin}%
+}
+
+\newcommand\pygmented@tcolorbox@margin{%
+  \advance \pygmented@linenosep \kvtcb@left@rule
+  \advance \pygmented@linenosep \kvtcb@leftupper
+  \advance \pygmented@linenosep \kvtcb@boxsep
+}
+
+\newcommand\pygmented@boite@margin{%
+  \advance \pygmented@linenosep \boite@leftrule
+  \advance \pygmented@linenosep \boite@boxsep
+}
 
 \def\pygmented@global@options{}
 

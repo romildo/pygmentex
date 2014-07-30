@@ -208,25 +208,26 @@ GENERIC_DEFINITIONS_2 = r'''
 
 INLINE_SNIPPET_TEMPLATE = r'''
 \expandafter\def\csname pygmented@snippet@%(number)s\endcsname{%%
-  \pygmented@snippet@do{\efbox}{%%
+  \pygmented@snippet@inlined{%%
 %(body)s%%
 }}
 '''
 
 DISPLAY_SNIPPET_TEMPLATE = r'''
 \expandafter\def\csname pygmented@snippet@%(number)s\endcsname{%%
-  \pygmented@snippet@do{\myframed}{%%
+  \begin{pygmented@snippet@framed}%%
 %(body)s%%
-}}
+  \end{pygmented@snippet@framed}%%
+}
 '''
 
 DISPLAY_LINENOS_SNIPPET_TEMPLATE = r'''
 \expandafter\def\csname pygmented@snippet@%(number)s\endcsname{%%
   \begingroup
     \def\pygmented@alllinenos{(%(linenumbers)s)}%%
-    \pygmented@snippet@do{\myframed}{%%
+    \begin{pygmented@snippet@framed}%%
 %(body)s%%
-}%%
+    \end{pygmented@snippet@framed}%%
   \endgroup
 }
 '''
