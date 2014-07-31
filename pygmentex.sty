@@ -147,9 +147,6 @@
   escapeinside/.store in  = \pygmented@opt@escapeinside,
   texcl/.is if            = pygmented@opt@texcl,
   mathescape/.is if       = pygmented@opt@mathescape,
-  %
-  colback/.store in       = \pygmented@opt@colback,
-  font/.store in          = \pygmented@opt@font,
   % 
   label/.store in         = \pygmented@opt@label,
   caption/.store in       = \pygmented@opt@caption,
@@ -161,40 +158,23 @@
   linenostart/.store in   = \pygmented@opt@linenostart,
   linenostep/.store in    = \pygmented@opt@linenostep,
   linenosep/.store in     = \pygmented@opt@linenosep,
-  % 
-  framesep/.store in      = \pygmented@opt@framesep,
-  framerule/.store in     = \pygmented@opt@framerule,
-  % 
-  frame/.is choice,
-  frame/none/.code        = {\def\pygmented@opt@frame{none}\pygmented@leftfalse\pygmented@rightfalse},
-  frame/lines/.code       = {\def\pygmented@opt@frame{lines}\pygmented@leftfalse\pygmented@rightfalse},
-  frame/single/.code      = {\def\pygmented@opt@frame{single}\pygmented@lefttrue\pygmented@righttrue},
   %
+  colback/.store in       = \pygmented@opt@colback,
+  font/.store in          = \pygmented@opt@font,
+  % 
   texcl/.default          = true,
   mathescape/.default     = true,
   linenos/.default        = true,
-  frame/.default          = single,
 }
 
 \pgfqkeys{/pygmented}{
+  boxing method = mdframed,
   style         = default,
-  framerule     = \fboxrule,
-  framesep      = \fboxsep,
   linenos       = false,
   linenosep     = 2pt,
   font          = \ttfamily,
-  frame         = none,
   tabsize       = 8,
-  boxing method = mdframed,
 }
-
-% \pygmented@define@switch{extra}{numberblanklines}
-% \pygmented@define@switch{extra}{showspaces}
-% \pygmented@define@switch{extra}{resetmargins}
-% \pygmented@define@switch{extra}{samepage}
-% \pygmented@define@switch{extra}{showtabs}
-% \pygmented@define@switch{extra}{obeytabs}
-
 
 % =========================================================
 % pygmented commands and environments
@@ -230,8 +210,8 @@
   }%
   \def\remainingoptions{}%
   \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
-  \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
-  \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
+  % \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
+  % \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
   % 
   \fvset{tabsize=\pygmented@opt@tabsize}%
   \immediate\write\pygmented@outfile{<@@pygmented@display@\the\pygmented@counter}%
@@ -253,8 +233,8 @@
     }%
     \def\remainingoptions{}%
     \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
-    \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
-    \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
+    % \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
+    % \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
     % 
     \immediate\write\pygmented@outfile{<@@pygmented@inline@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
