@@ -46,7 +46,6 @@
   \endgroup
 }
 
-
 % =========================================================
 % fancyvrb new commands to append to a file
 % =========================================================
@@ -156,6 +155,18 @@
   % \typeout{\meaning\remainingoptions}%
 }
 
+\newcommand\pygmented@process@adicional@options[1]{%
+  \edef\pygmented@saved@{%
+    \ifcsname pygmented@#1@additional@options\endcsname
+      \csname pygmented@#1@additional@options\endcsname,%
+    \fi
+  }%
+  \pgfkeysalsofilteredfrom{\pygmented@saved@}%
+  %%%%%%% DEBUGING
+  % \typeout{\string\remainingoptions:}%
+  % \typeout{\meaning\remainingoptions}%
+}
+
 \newcommand\inputpygmented[2][]{%
   \begingroup
     \pygmented@process@options{#1}
@@ -207,13 +218,7 @@
   \begingroup
   \csname PYstyle\pygmented@opt@style\endcsname
   \pygmented@opt@font
-  \edef\pygmented@saved@{%
-    \ifcsname pygmented@\pygmented@opt@inline@method @additional@options\endcsname
-      \csname pygmented@\pygmented@opt@inline@method @additional@options\endcsname,%
-    \fi
-  }%
-  \pgfkeysalsofilteredfrom{\pygmented@saved@}%
-  \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
+  \pygmented@process@adicional@options{\pygmented@opt@inline@method}
   \expandafter\expandafter\csname \pygmented@opt@inline@method \endcsname\expandafter[\remainingoptions]{#1}%
   \endgroup
 }
@@ -241,13 +246,7 @@
     \pygmented@title
   \fi
   %
-  \edef\pygmented@saved@{%
-    \ifcsname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname
-      \csname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname,%
-    \fi
-  }%
-  \pgfkeysalsofilteredfrom{\pygmented@saved@}%
-  \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
+  \pygmented@process@adicional@options{\pygmented@opt@boxing@method}
   \expandafter\begin\expandafter{\expandafter\pygmented@opt@boxing@method\expandafter}\expandafter[%
     \remainingoptions
     ]%
