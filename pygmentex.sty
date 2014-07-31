@@ -143,26 +143,38 @@
 \newcommand\pygmented@process@options[1]{%
   \pgfkeys{%
     /pgf/key filters/defined/.install key filter,
-    /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
+    /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingglobaloptions
   }%
-  \def\remainingoptions{}%
+  \def\remainingglobaloptions{}%
   \pgfkeysalsofilteredfrom{\pygmented@global@options}%
+  \pgfkeysalso{%
+    /pgf/key filter handlers/append filtered to/.install key filter handler=\remaininguseroptions
+  }%
+  \def\remaininguseroptions{}%
   \pgfqkeysfiltered{/pygmented}{#1}%
-  %%%%%%% DEBUGING
-  % \typeout{}\typeout{\string\pygmented@global@options:}%
-  % \typeout{\meaning\pygmented@global@options}%
-  % \typeout{\string\remainingoptions:}%
-  % \typeout{\meaning\remainingoptions}%
+  % %%%%%%% DEBUGING
+  % \typeout{}%
+  % \typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%
+  % \typeout{\string\remainingglobaloptions:}\typeout{\meaning\remainingglobaloptions}%
+  % \typeout{\string\remaininguseroptions:}\typeout{\meaning\remaininguseroptions}%
 }
 
 \newcommand\pygmented@process@adicional@options[1]{%
+  \pgfkeysalso{%
+    /pgf/key filters/false/.install key filter,
+    /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
+  }%
+  \def\remainingoptions{}%
+  \pgfkeysalsofilteredfrom{\remainingglobaloptions}%
   \edef\pygmented@saved@{%
     \ifcsname pygmented@#1@additional@options\endcsname
       \csname pygmented@#1@additional@options\endcsname,%
     \fi
   }%
   \pgfkeysalsofilteredfrom{\pygmented@saved@}%
-  %%%%%%% DEBUGING
+  \pgfkeysalsofilteredfrom{\remaininguseroptions}%
+  % %%%%%%% DEBUGING
+  % \typeout{}%
   % \typeout{\string\remainingoptions:}%
   % \typeout{\meaning\remainingoptions}%
 }
