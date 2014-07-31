@@ -10,9 +10,13 @@
 \usepackage{tcolorbox}
 \usepackage{boites,boiteenv}
 \usepackage{fvrb-ex}
+\usepackage{tikz}
+\usepackage{calc}
 \usepackage{pygmentex}
 
 \fvset{gobble=0,frame=lines,framerule=1pt,numbers=left,fontsize=\small}
+
+\tcbuselibrary{skins,breakable}
 
 \definecolor{shadecolor}{rgb}{0.9,0.9,0.9}
 \definecolor{lightgreen}{rgb}{0.8,0.95,0.8}
@@ -147,6 +151,11 @@ is a Prolog clause. Its head is
 and its body is
 \pyginline[lang=prolog,style=vim,colback=black,hidealllines]=pai(A,X), pai(X,B)=.
 
+See the identifier
+\pyginline[inline method=efbox,colback=green!25]|variable|, which names
+something. String literals in C looks like
+\pyginline[lang=c,inline method=tcbox,colback=blue!20,boxrule=2pt]|"hello, world!\n"|.
+
 \setpygmented{colback=shadecolor}
 
 This one
@@ -160,7 +169,7 @@ This is a method header.
 
 \section{Displayed code snippets}
 
-\setpygmented{lang=scheme,colback=shadecolor,linecolor=blue,style=emacs}
+\setpygmented{lang=scheme,colback=shadecolor,style=emacs}
 
 In listing \ref{lst:fact} you can see a function definition in the
 Scheme language. This function computes the factorial of a natural
@@ -284,6 +293,44 @@ that I have written.
   font=\ttfamily\scriptsize,
   ]{pygmentex.py}
 
+\section{A fancy example using \texttt{tcolorbox}}
+
+The followig example uses \texttt{tcolorbox} to typeset the code
+listing.
+
+\newcounter{example}
+\newlength{\examlen}
+\colorlet{colexam}{red!75!black}
+
+
+\begin{pygmented}[boxing method=tcolorbox,%lang=sml,%
+  title=Example \arabic{example},
+  code={\refstepcounter{example}%
+        \settowidth{\examlen}{\Large\bfseries Example \arabic{example}}},%
+  coltitle=colexam,fonttitle=\Large\bfseries,
+  enhanced,breakable,
+  before=\par\medskip,
+  parbox=false,
+  frame hidden,interior hidden,segmentation hidden,
+  boxsep=0pt,left=0pt,right=3mm,toptitle=2mm,pad at break=0mm,
+  overlay unbroken={\draw[colexam,line width=1pt] (frame.north west)
+    --([xshift=-0.5pt]frame.north east)--([xshift=-0.5pt]frame.south east)
+    --(frame.south west);
+    \draw[colexam,line width=2pt] ([yshift=0.5pt]frame.north west)
+    -- +(\examlen,0pt);},
+  overlay first={\draw[colexam,line width=1pt] (frame.north west)
+    --([xshift=-0.5pt]frame.north east)--([xshift=-0.5pt]frame.south east);
+    \draw[red!75!black,line width=2pt] ([yshift=0.5pt]frame.north west)
+    -- +(\examlen,0pt);},
+  overlay middle={\draw[colexam,line width=1pt] ([xshift=-0.5pt]frame.north east)
+    --([xshift=-0.5pt]frame.south east); },
+  overlay last={\draw[colexam,line width=1pt] ([xshift=-0.5pt]frame.north east)
+    --([xshift=-0.5pt]frame.south east)--(frame.south west);}%
+  ]
+val (x,y) = f (2, 3, 4) "message"
+and forEvery = x + y
+\end{pygmented}
+  
 \section{Conclusion}
 
 That is all.

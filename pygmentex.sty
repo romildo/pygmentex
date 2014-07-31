@@ -141,6 +141,7 @@
   /pygmented/.cd,
   % 
   boxing method/.store in = \pygmented@opt@boxing@method,
+  inline method/.store in = \pygmented@opt@inline@method,
   % 
   lang/.store in          = \pygmented@opt@lang,
   style/.store in         = \pygmented@opt@style,
@@ -169,6 +170,7 @@
 
 \pgfqkeys{/pygmented}{
   boxing method = mdframed,
+  inline method = efbox,
   style         = default,
   linenos       = false,
   linenosep     = 2pt,
@@ -184,15 +186,24 @@
 
 \newcount\pygmented@counter
 
+\newcommand\pygmented@process@options[1]{%
+  \pgfkeys{%
+    /pgf/key filters/defined/.install key filter,
+    /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
+  }%
+  \def\remainingoptions{}%
+  \pgfkeysalsofilteredfrom{\pygmented@global@options}%
+  \pgfqkeysfiltered{/pygmented}{#1}%
+  %%%%%%% DEBUGING
+  % \typeout{}\typeout{\string\pygmented@global@options:}%
+  % \typeout{\meaning\pygmented@global@options}%
+  % \typeout{\string\remainingoptions:}%
+  % \typeout{\meaning\remainingoptions}%
+}
+
 \newcommand\inputpygmented[2][]{%
   \begingroup
-    \pgfkeys{%
-      /pgf/key filters/defined/.install key filter,
-      /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
-    }%
-    \def\remainingoptions{}%
-    \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
-    % 
+    \pygmented@process@options{#1}
     \immediate\write\pygmented@outfile{<@@pygmented@input@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
     \immediate\write\pygmented@outfile{#2}%
@@ -204,15 +215,7 @@
 }
 
 \newenvironment{pygmented}[1][]{%
-  \pgfkeys{%
-    /pgf/key filters/defined/.install key filter,
-    /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
-  }%
-  \def\remainingoptions{}%
-  \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
-  % \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
-  % \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
-  % 
+  \pygmented@process@options{#1}
   \fvset{tabsize=\pygmented@opt@tabsize}%
   \immediate\write\pygmented@outfile{<@@pygmented@display@\the\pygmented@counter}%
   \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
@@ -227,15 +230,7 @@
 
 \newcommand\pyginline[2][]{%
   \begingroup
-    \pgfkeys{%
-      /pgf/key filters/defined/.install key filter,
-      /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
-    }%
-    \def\remainingoptions{}%
-    \pgfqkeysfiltered@with@saved@options{/pygmented}{\pygmented@global@options}{#1}%
-    % \typeout{}\typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%%%%%%% DEBUGING
-    % \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
-    % 
+    \pygmented@process@options{#1}
     \immediate\write\pygmented@outfile{<@@pygmented@inline@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
     \DefineShortVerb{#2}%
@@ -253,34 +248,18 @@
 }
 
 
-% Macro to typeset an already pygmented snippet of code.
-% It is created by the pygmentex program.
-%
-% #1 => macro to further typeset the snippet body
-% #2 => snippet body
-%
 \newcommand\pygmented@snippet@inlined[1]{%
   \begingroup
   \csname PYstyle\pygmented@opt@style\endcsname
   \pygmented@opt@font
   \edef\pygmented@saved@{%
-    \ifcsname pygmented@opt@colback\endcsname
-      backgroundcolor=\pygmented@opt@colback,%
-      % colback=\pygmented@opt@colback,%
+    \ifcsname pygmented@\pygmented@opt@inline@method @additional@options\endcsname
+      \csname pygmented@\pygmented@opt@inline@method @additional@options\endcsname,%
     \fi
-    % nobeforeafter,%
-    % tcbox raise base,%
-    % left=0mm,%
-    % right=0mm,%
-    % top=0mm,%
-    % bottom=0mm,%
-    % boxsep=2pt,%
-    % arc=1pt,%
-    % boxrule=0pt,%
-    \unexpanded\expandafter{\remainingoptions},%
   }%
-  \expandafter\efbox\expandafter[\pygmented@saved@]{#1}%
-  % \expandafter\tcbox\expandafter[\pygmented@saved@]{#1}%
+  \pgfkeysalsofilteredfrom{\pygmented@saved@}%
+  \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
+  \expandafter\expandafter\csname \pygmented@opt@inline@method \endcsname\expandafter[\remainingoptions]{#1}%
   \endgroup
 }
 
@@ -311,11 +290,11 @@
     \ifcsname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname
       \csname pygmented@\pygmented@opt@boxing@method @additional@options\endcsname,%
     \fi
-    \unexpanded\expandafter{\remainingoptions},%
   }%
-  \typeout{\string\pygmented@saved@:}\typeout{\meaning\pygmented@saved@}%%%%%%% DEBUGING
+  \pgfkeysalsofilteredfrom{\pygmented@saved@}%
+  \typeout{\string\remainingoptions:}\typeout{\meaning\remainingoptions}%%%%%%% DEBUGING
   \expandafter\begin\expandafter{\expandafter\pygmented@opt@boxing@method\expandafter}\expandafter[%
-    \pygmented@saved@
+    \remainingoptions
     ]%
   \csname PYstyle\pygmented@opt@style\endcsname
   \pygmented@opt@font
@@ -348,12 +327,26 @@
     \hspace*{\pygmented@linenosep}}
 }
 
-% \newenvironment{pygmented@boxing}{%
-%   \expandafter\begin\expandafter{\expandafter\pygmented@opt@boxing@method\expandafter}\expandafter[\remainingoptions]%
-%   }{%
-%   \end{\pygmented@opt@boxing@method}%
-% }%
+\newcommand\pygmented@tcbox@additional@options{%
+  nobeforeafter,%
+  tcbox raise base,%
+  left=0mm,%
+  right=0mm,%
+  top=0mm,%
+  bottom=0mm,%
+  boxsep=2pt,%
+  arc=1pt,%
+  boxrule=0pt,%
+  \ifcsname pygmented@opt@colback\endcsname
+    colback=\pygmented@opt@colback,%
+  \fi
+}
 
+\newcommand\pygmented@efbox@additional@options{%
+  \ifcsname pygmented@opt@colback\endcsname
+    backgroundcolor=\pygmented@opt@colback,%
+  \fi
+}
 
 \newcommand\pygmented@mdframed@additional@options{%
   roundcorner=5pt,%
@@ -402,7 +395,7 @@
 \def\pygmented@global@options{}
 
 \newcommand\setpygmented[1]{%
-  \def\pygmented@global@options{#1}%
+  \def\pygmented@global@options{/pygmented/.cd,#1}%
 }
 
 
