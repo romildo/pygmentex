@@ -283,7 +283,7 @@ def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
     lexer.encoding = ''
     _fmter.encoding = encoding
 
-    stylename = opts['style']
+    stylename = opts['sty']
 
     _fmter.style = get_style_by_name(stylename)
     _fmter._create_stylesheet()
@@ -375,7 +375,7 @@ def convert(code, outfile):
     outfile.write(GENERIC_DEFINITIONS_1)
 
     opts = { 'lang'      : 'c',
-             'style'     : 'default',
+             'sty'       : 'default',
              'linenosep' : '0pt',
              'tabsize'   : '8',
              'encoding'  : 'guess',
