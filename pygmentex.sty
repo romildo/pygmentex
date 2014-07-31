@@ -76,51 +76,6 @@
 
 \DefineVerbatimEnvironment{VerbatimOutAppend}{VerbatimOutAppend}{}
 
-
-% =========================================================
-% Some macros to help handling pgfkeys options
-% =========================================================
-
-% \push{\macroname}{value}
-%
-% This will (re)define "\macroname" so that "value" is added
-% to the end of its current expansion.
-%
-\newcommand*\push[2]{%
-  % This assumes e-TeX
-  \ifx\@empty#1\@empty
-    \def#1{#2}%
-  \else
-    \edef#1{%
-      \unexpanded\expandafter{#1},%
-      \unexpanded{#2}}%
-  \fi
-}
-
-\newcommand*\pgfkeys@unknown@handler[2]{%
-  % #1 => macro to hold the unknown options
-  % #2 => option value
-  \edef\key@value{%
-    \pgfkeyscurrentname\ifx#2\pgfkeysnovalue\else=\unexpanded{#2}\fi
-  }%
-  \expandafter\push\expandafter#1\expandafter{\key@value}%
-}
-
-\newcommand*\pgfqkeysfiltered@with@saved@options[3]{%
-  % #1 => path
-  % #2 => macro holding saved options
-  % #3 => keys
-  \def\@pgfqkeysfiltered@##1{\pgfqkeysfiltered{#1}{##1}}%
-  \expandafter\@pgfqkeysfiltered@\expandafter{#2,#3}%
-}
-
-\newcommand*\call@with@saved@options[3]{%
-  % #1 => macro to be called
-  % #2 => macro holding saved options
-  % #3 => aditional options
-  \expandafter#1\expandafter[#2,#3]%
-}
-
 % =========================================================
 % Main options
 % =========================================================
