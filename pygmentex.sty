@@ -315,16 +315,14 @@
 }
 
 \newcommand\pygmented@mdframed@additional@options{%
-  roundcorner=5pt,%
   leftmargin=\pygmented@leftmargin,%
+  frametitlerule=true,%
   \ifcsname pygmented@opt@colback\endcsname
     backgroundcolor=\pygmented@opt@colback,%
   \fi
-  frametitlerule=true,%
 }
 
 \newcommand\pygmented@tcolorbox@additional@options{%
-  arc=5pt,%
   grow to left by=-\pygmented@leftmargin,%
   \ifcsname pygmented@opt@colback\endcsname
     colback=\pygmented@opt@colback,%
@@ -332,7 +330,6 @@
 }
 
 \newcommand\pygmented@boite@additional@options{%
-  arc=5pt,%
   leftmargin=\pygmented@leftmargin,%
   \ifcsname pygmented@opt@colback\endcsname
     colback=\pygmented@opt@colback,%
