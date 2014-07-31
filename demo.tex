@@ -13,6 +13,7 @@
 \usepackage{tikz}
 \usepackage{calc}
 \usepackage{pygmentex}
+\usepackage{lipsum}
 
 \fvset{gobble=0,frame=lines,framerule=1pt,numbers=left,fontsize=\small}
 
@@ -147,9 +148,9 @@ This is a C declaration with initialization.
 
 \pyginline[lang=prolog,colback=yellow]=avo(A,B) :- pai(A,X), pai(X,B).=
 is a Prolog clause. Its head is
-\pyginline[lang=prolog,style=emacs,colback=yellow,linecolor=red]=avo(A,B)=
+\pyginline[lang=prolog,sty=emacs,colback=yellow,linecolor=red]=avo(A,B)=
 and its body is
-\pyginline[lang=prolog,style=vim,colback=black,hidealllines]=pai(A,X), pai(X,B)=.
+\pyginline[lang=prolog,sty=vim,colback=black,hidealllines]=pai(A,X), pai(X,B)=.
 
 See the identifier
 \pyginline[inline method=efbox,colback=green!25]|variable|, which names
@@ -164,19 +165,19 @@ is an OCaml expression with local bindings. With OCaml one can do
 imperative, functional and object oriented programming.
 
 Now some Java code:
-\pyginline[lang=java,style=colorful,font=\ttfamily\itshape,linewidth=1pt]|public int f(double x)|.
+\pyginline[lang=java,sty=colorful,font=\ttfamily\itshape,linewidth=1pt]|public int f(double x)|.
 This is a method header.
 
 \section{Displayed code snippets}
 
-\setpygmented{lang=scheme,colback=shadecolor,style=emacs}
+\setpygmented{lang=scheme,colback=shadecolor,sty=emacs}
 
 In listing \ref{lst:fact} you can see a function definition in the
 Scheme language. This function computes the factorial of a natural
 number.
 \newline\rule{\linewidth}{2pt}
 \begin{pygmented}[
-  style=emacs,
+  sty=emacs,
   linenos,
   label=lst:fact,
   caption=A Scheme function.
@@ -225,7 +226,7 @@ A Python code snippet:
 
 \inputpygmented[
   lang=python,
-  style=emacs,
+  sty=emacs,
   linenos,
   linenostep=3,
   linewidth=1pt,
@@ -234,7 +235,7 @@ A Python code snippet:
 
 \section{Escaping to \LaTeX{} in code snippets}
 
-\begin{pygmented}[lang=c,style=manni,escapeinside=||,
+\begin{pygmented}[lang=c,sty=manni,escapeinside=||,
   % caption=Conditional command.
   ]
 if (|\textit{condition}|)
@@ -288,12 +289,12 @@ that I have written.
 
 \inputpygmented[
   lang=python,
-  style=autumn,
+  sty=autumn,
   colback=green!10,
   font=\ttfamily\scriptsize,
   ]{pygmentex.py}
 
-\section{A fancy example using \texttt{tcolorbox}}
+\section{Some fancy examples using \texttt{tcolorbox}}
 
 The followig example uses \texttt{tcolorbox} to typeset the code
 listing.
@@ -302,9 +303,8 @@ listing.
 \newlength{\examlen}
 \colorlet{colexam}{red!75!black}
 
-
-\begin{pygmented}[boxing method=tcolorbox,%lang=sml,%
-  title=Example \arabic{example},
+\begin{pygmented}[boxing method=tcolorbox,lang=scala,
+  title=Example \arabic{example}: hello from \texttt{Scala},
   code={\refstepcounter{example}%
         \settowidth{\examlen}{\Large\bfseries Example \arabic{example}}},%
   coltitle=colexam,fonttitle=\Large\bfseries,
@@ -327,10 +327,218 @@ listing.
   overlay last={\draw[colexam,line width=1pt] ([xshift=-0.5pt]frame.north east)
     --([xshift=-0.5pt]frame.south east)--(frame.south west);}%
   ]
-val (x,y) = f (2, 3, 4) "message"
-and forEvery = x + y
+object HelloWorld extends App {
+  println("Hello, world!")
+}\end{pygmented}
+
+\begin{pygmented}[boxing method=tcolorbox,lang=java,
+  enhanced,colback=blue!10!white,colframe=orange,top=4mm,
+  enlarge top by=\baselineskip/2+1mm,
+  enlarge top at break by=0mm,pad at break=2mm,
+  fontupper=\normalsize,
+  overlay unbroken and first={%
+    \node[rectangle,rounded corners,draw=black,fill=blue!20!white,
+    inner sep=1mm,anchor=west,font=\small]
+    at ([xshift=4.5mm]frame.north west) {\strut\textbf{My fancy title}};},
+  ]
+public class Hello {
+  public static void main(String[] args) {
+    System.out.println("Hello, world!")
+  }
+}
 \end{pygmented}
-  
+
+\begin{pygmented}[boxing method=tcolorbox,lang=haskell,
+  enhanced,sharp corners=uphill,
+  colback=blue!25!white,colframe=blue!25!black,coltext=blue!90!black,
+  fontupper=\Large\bfseries,arc=6mm,boxrule=2mm,boxsep=5mm,
+  borderline={0.3mm}{0.3mm}{white}
+  ]
+module Main (main) where
+
+main :: IO ()
+main = putStrLn "Hello, world!"
+\end{pygmented}
+
+\begin{pygmented}[boxing method=tcolorbox,lang=c++,
+  enhanced,frame style image=blueshade.png,
+  opacityback=0.75,opacitybacktitle=0.25,
+  colback=blue!5!white,colframe=blue!75!black,
+  title=My title
+  ]
+#include <iostream>
+using namespace std;
+int main(int argc, char** argv) {
+  cout << "Hello, world!" << endl;
+  return 0;
+}
+\end{pygmented}
+
+\begin{pygmented}[boxing method=tcolorbox,lang=d,
+  enhanced,attach boxed title to top center={yshift=-3mm,yshifttext=-1mm},
+  colback=blue!5!white,colframe=blue!75!black,colbacktitle=red!80!black,
+  title=My title,fonttitle=\bfseries,
+  boxed title style={size=small,colframe=red!50!black}
+  ]
+/* This program prints a
+   hello world message
+   to the console.  */
+ 
+import std.stdio;
+ 
+void main()
+{
+    writeln("Hello, World!");
+}
+\end{pygmented}
+
+
+\section{Some fancy examples using \texttt{mdframed}}
+
+The followig example uses \texttt{mdframed} to typeset the code listing.
+
+\global\mdfdefinestyle{exampledefault}{%
+  linecolor=red,linewidth=3pt,%
+  leftmargin=1cm,rightmargin=1cm
+}
+
+\begin{pygmented}[boxing method=mdframed,lang=ada,style=exampledefault]
+with Ada.Text_IO;
+ 
+procedure Hello_World is
+ use Ada.Text_IO;
+begin
+    Put_Line("Hello, world!");
+end;
+\end{pygmented}
+
+\global\mdfapptodefinestyle{exampledefault}{%
+  topline=false,bottomline=false,
+}
+
+\begin{pygmented}[boxing method=mdframed,lang=pascal,style=exampledefault,frametitle={Saying \emph{hello} from Pascal}]
+program HelloWorld;
+ 
+begin
+  WriteLn('Hello, world!');
+end.
+\end{pygmented}
+
+\global\mdfdefinestyle{separateheader}{%
+  frametitle={%
+    \tikz[baseline=(current bounding box.east),outer sep=0pt]
+    \node[anchor=east,rectangle,fill=blue!20]
+    {\strut Saying \emph{hello} em Eiffel};},
+  innertopmargin=10pt,linecolor=blue!20,%
+  linewidth=2pt,topline=true,
+  frametitleaboveskip=\dimexpr-\ht\strutbox\relax,
+  frametitlerule=false,
+  backgroundcolor=white,
+}
+
+\begin{pygmented}[boxing method=mdframed,lang=eiffel,style=separateheader]
+class
+    HELLO_WORLD
+create
+    make
+feature
+    make
+        do
+            print ("Hello, world!%N")
+        end
+end
+\end{pygmented}
+
+
+\tikzset{titregris/.style =
+     {draw=gray, thick, fill=white, shading = exersicetitle, %
+      text=gray, rectangle, rounded corners, right,minimum height=.7cm}}
+\pgfdeclarehorizontalshading{exersicebackground}{100bp}
+          {color(0bp)=(green!40); color(100bp)=(black!5)}
+\pgfdeclarehorizontalshading{exersicetitle}{100bp}
+          {color(0bp)=(red!40);color(100bp)=(black!5)}
+\newcounter{exercise}
+\renewcommand*\theexercise{Exercise~n\arabic{exercise}}
+\makeatletter
+\def\mdf@@exercisepoints{}%new mdframed key:
+\define@key{mdf}{exercisepoints}{%
+    \def\mdf@@exercisepoints{#1}
+}
+\mdfdefinestyle{exercisestyle}{%
+  outerlinewidth=1em,outerlinecolor=white,%
+  leftmargin=-1em,rightmargin=-1em,%
+  middlelinewidth=1.2pt,roundcorner=5pt,linecolor=gray,
+  apptotikzsetting={\tikzset{mdfbackground/.append style ={%
+                       shading = exersicebackground}}},
+  innertopmargin=1.2\baselineskip,
+  skipabove={\dimexpr0.5\baselineskip+\topskip\relax},
+  skipbelow={-1em},
+  needspace=3\baselineskip,
+  frametitlefont=\sffamily\bfseries,
+  settings={\global\stepcounter{exercise}},
+  singleextra={%
+      \node[titregris,xshift=1cm] at (P-|O) %
+         {~\mdf@frametitlefont{\theexercise}\hbox{~}};
+      \ifdefempty{\mdf@@exercisepoints}%
+      {}%
+      {\node[titregris,left,xshift=-1cm] at (P)%
+        {~\mdf@frametitlefont{\mdf@@exercisepoints points}\hbox{~}};}%
+   },
+  firstextra={%
+      \node[titregris,xshift=1cm] at (P-|O) %
+         {~\mdf@frametitlefont{\theexercise}\hbox{~}};
+      \ifdefempty{\mdf@@exercisepoints}%
+      {}%
+      {\node[titregris,left,xshift=-1cm] at (P)%
+        {~\mdf@frametitlefont{\mdf@@exercisepoints points}\hbox{~}};}%
+   },
+}
+\makeatother
+
+\begin{pygmented}[boxing method=mdframed,lang=go,style=exercisestyle]
+// hello world in 'go'
+package main
+ 
+import "fmt"
+ 
+func main() {
+   fmt.Println("Hello, world!")
+}
+\end{pygmented}
+
+\begin{pygmented}[boxing method=mdframed,lang=objective-c,style=exercisestyle,exercisepoints=10]
+/* hello from objective-c */
+
+#import <stdio.h>
+#import <Foundation/Foundation.h>
+ 
+int main(void)
+{
+    NSLog(@"Hello, world!\n");
+    return 0;
+}
+\end{pygmented}
+
+\mdfdefinestyle{another}{%
+  linecolor=red,middlelinewidth=2pt,%
+  frametitlerule=true,%
+  apptotikzsetting={\tikzset{mdfframetitlebackground/.append style={%
+        shade,left color=white, right color=blue!20}}},
+  frametitlerulecolor=green!60,
+  frametitlerulewidth=1pt,
+  innertopmargin=\topskip,
+}
+
+\begin{pygmented}[boxing method=mdframed,lang=c,style=another,frametitle={Hello from C}]
+#include <stdio.h>
+int main(int argc, char **argv) {
+  printf("Hello, world!\n");
+  return 0;
+}
+\end{pygmented}
+
+
+
 \section{Conclusion}
 
 That is all.
