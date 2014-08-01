@@ -1,12 +1,12 @@
-\documentclass[10pt]{article}
+\documentclass[10pt,a4paper]{article}
 
-\usepackage[margin=13mm]{geometry}
+%\usepackage[margin=13mm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
 \usepackage{xcolor}
 \usepackage{hyperref}
-\usepackage[framemethod=tikz,frametitlerule=true]{mdframed}
+\usepackage[framemethod=tikz]{mdframed}
 \usepackage{tcolorbox}
 \usepackage{boites,boiteenv}
 \usepackage{fvrb-ex}
@@ -284,15 +284,11 @@ end
 
 \section{A long program}
 
-Here you can read the source code for the \texttt{pygmentex.py} program
-that I have written.
+Here you can read the source code for a hand written lexical analyser
+for the \emph{straight-line} programming language that I have developed
+in Java.
 
-\inputpygmented[
-  lang=python,
-  sty=autumn,
-  colback=green!10,
-  font=\ttfamily\scriptsize,
-  ]{pygmentex.py}
+\inputpygmented[boxing method=mdframed,lang=java,sty=autumn,colback=red!8,font=\ttfamily\small,tabsize=2,frametitle=\emph{Ad hoc} lexical analyser]{demo.java}
 
 \section{Some fancy examples using \texttt{tcolorbox}}
 
