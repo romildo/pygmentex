@@ -142,7 +142,7 @@
 
 \newcommand\pygmented@process@options[1]{%
   \pgfkeys{%
-    /pgf/key filters/defined/.install key filter,
+    /pgf/key filters/defined/.install key filter,%
     /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingglobaloptions
   }%
   \def\remainingglobaloptions{}%
@@ -161,7 +161,7 @@
 
 \newcommand\pygmented@process@adicional@options[1]{%
   \pgfkeysalso{%
-    /pgf/key filters/false/.install key filter,
+    /pgf/key filters/false/.install key filter,%
     /pgf/key filter handlers/append filtered to/.install key filter handler=\remainingoptions
   }%
   \def\remainingoptions{}%
@@ -181,19 +181,19 @@
 
 \newcommand\inputpygmented[2][]{%
   \begingroup
-    \pygmented@process@options{#1}
+    \pygmented@process@options{#1}%
     \immediate\write\pygmented@outfile{<@@pygmented@input@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
     \immediate\write\pygmented@outfile{#2}%
     \immediate\write\pygmented@outfile{>@@pygmented@input@\the\pygmented@counter}%
     %
-    \csname pygmented@snippet@\the\pygmented@counter\endcsname%
+    \csname pygmented@snippet@\the\pygmented@counter\endcsname
     \global\advance\pygmented@counter by 1\relax
   \endgroup
 }
 
 \newenvironment{pygmented}[1][]{%
-  \pygmented@process@options{#1}
+  \pygmented@process@options{#1}%
   \fvset{tabsize=\pygmented@opt@tabsize}%
   \immediate\write\pygmented@outfile{<@@pygmented@display@\the\pygmented@counter}%
   \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
@@ -208,7 +208,7 @@
 
 \newcommand\pyginline[2][]{%
   \begingroup
-    \pygmented@process@options{#1}
+    \pygmented@process@options{#1}%
     \immediate\write\pygmented@outfile{<@@pygmented@inline@\the\pygmented@counter}%
     \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
     \DefineShortVerb{#2}%
@@ -230,7 +230,7 @@
   \begingroup
   \csname PYstyle\pygmented@opt@style\endcsname
   \pygmented@opt@font
-  \pygmented@process@adicional@options{\pygmented@opt@inline@method}
+  \pygmented@process@adicional@options{\pygmented@opt@inline@method}%
   \expandafter\expandafter\csname \pygmented@opt@inline@method \endcsname\expandafter[\remainingoptions]{#1}%
   \endgroup
 }
@@ -258,7 +258,7 @@
     \pygmented@title
   \fi
   %
-  \pygmented@process@adicional@options{\pygmented@opt@boxing@method}
+  \pygmented@process@adicional@options{\pygmented@opt@boxing@method}%
   \expandafter\begin\expandafter{\expandafter\pygmented@opt@boxing@method\expandafter}\expandafter[%
     \remainingoptions
     ]%
@@ -290,7 +290,7 @@
   \advance \pygmented@linenosep \pygmented@opt@linenosep
   \makebox[0pt][r]{%
     \FormatLineNumber{#1}%
-    \hspace*{\pygmented@linenosep}}
+    \hspace*{\pygmented@linenosep}}%
 }
 
 \newcommand\pygmented@tcbox@additional@options{%
