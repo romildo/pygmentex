@@ -3,7 +3,7 @@
 %\usepackage[margin=13mm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
+\usepackage[font=normalsize,format=plain,labelfont=bf,up,textfont=it,up]{caption}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage[framemethod=tikz]{mdframed}
@@ -15,7 +15,7 @@
 \usepackage{pygmentex}
 \usepackage{lipsum}
 
-\fvset{gobble=0,frame=lines,framerule=1pt,numbers=left,fontsize=\small}
+\fvset{gobble=0,showtabs,tabsize=1,frame=lines,framerule=1pt,numbers=left,fontsize=\scriptsize}
 
 \tcbuselibrary{skins,breakable}
 
@@ -117,33 +117,150 @@ suppressed).
 
 \begin{Example}
 A code snippet inside a minipage:
-\begin{minipage}{.5\linewidth}
-  \begin{pygmented}[lang=d,gobble=4]
-    ulong fact(ulong n)
-    {
-      if(n < 2)
-        return 1;
-      else
-        return n * fact(n - 1);
-    }
-  \end{pygmented}
+\begin{minipage}[t]{.5\linewidth}
+    \begin{pygmented}[lang=d,gobble=8]
+        ulong fact(ulong n)
+        {
+          if(n < 2)
+            return 1;
+          else
+            return n * fact(n - 1);
+        }
+      \end{pygmented}
 \end{minipage}
 \end{Example}
 
 
-% \section{Size of tabulator}
+\section{Size of tabulator}
 
-% The option \verb|tabsize| specifies the number of of spaces given by a
-% tab character (Default: 8).
+The option \verb|tabsize| specifies the number of of spaces given by a
+tab character (Default: 8).
 
-% \begin{Example}
-% \begin{pygmented}[lang=lisp,tabsize=5]
-% ;; Triple the value of a number
-% (defun triple (X)
-% 	"Compute three times X."
-% 	(* 3 X))
-% \end{pygmented}
-% \end{Example}
+\begin{Verbatim}[showtabs,tabsize=1]
+\begin{pygmented}[lang=lisp,tabsize=4]
+;; Triple the value of a number
+(defun triple	(X)
+	"Compute three times X."
+	(* 3 X))
+\end{pygmented}
+\end{Verbatim}
+
+\begin{pygmented}[lang=lisp,tabsize=4]
+;; Triple the value of a number
+(defun triple	(X)
+	"Compute three times X."
+	(* 3 X))
+\end{pygmented}
+
+
+\section{Numbering lines}
+
+The lines of a listing can be numbered. The followig options control
+numbering of lines.
+\begin{itemize}
+  \item Line numbering is enabled or disable with the \verb|linenos|
+  boolean option.
+  \item The number used for the first line can be set with the option
+  \verb|linenostart|.
+  \item The step between numbered lines can be set with the option
+  \verb|linenostep|.
+  \item The space between the line number and the line of the listing
+  can be set with the option \verb|linenosep|.
+\end{itemize}
+
+In the followig listing you can see a Scheme function to calculate the
+factorial of a number.
+
+\begin{Example}
+\begin{pygmented}[lang=scheme,linenos,linenostart=1001,linenostep=2,linenosep=5mm]
+;; Building a list of squares from 0 to 9.
+;; Note: loop is simply an arbitrary symbol used as
+;; a label. Any symbol will do.
+ 
+(define (list-of-squares n)
+  (let loop ((i n) (res '()))
+    (if (< i 0)
+        res
+        (loop (- i 1) (cons (* i i) res)))))
+\end{pygmented}
+\end{Example}
+
+\section{Captioning}
+
+The option \verb|caption| can be used to set a caption for the listing.
+The option \verb|label| allows the assignment of a label to the listing.
+
+Here is an example:
+
+\begin{Example}
+\begin{pygmented}[lang=c++,label=lst:test,caption=A \textbf{C++} example]
+// This program adds two numbers and prints their sum.
+#include <iostream>
+int main()
+{
+  int a;
+  int b;
+  int sum;
+  sum = a + b;
+  std::cout << "The sum of " << a << " and " << b
+            << " is " << sum << "\n";
+  return 0;
+}
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+  Listing \ref{lst:test} is a C++ program.
+\end{Example}
+
+\section{Escaping to \LaTeX{} inside a code snippet}
+
+The option \verb|texcomments|, if set to \texttt{true}, enables \LaTeX{}
+comment lines. That is, LaTex markup in comment tokens is not escaped
+so that \LaTeX{} can render it.
+
+The \verb|mathescape|, if set to \texttt{true}, enables \LaTeX{} math
+mode escape in comments. That is, \verb|$...$| inside a comment will
+trigger math mode.
+
+The option \verb|escapeinside|, if set to a string of length two,
+enables escaping to \LaTeX{}. Text delimited by these two characters
+is read as \LaTeX{} code and typeset accordingly. It has no effect in
+string literals. It has no effect in comments if \verb|texcomments| or
+\verb|mathescape| is set.
+
+Some examples follows.
+
+\begin{Example}
+\begin{pygmented}[lang=c++,texcomments]
+#include <iostream>
+using namespace std;
+main()
+{
+   cout << "Hello World";  // prints \underline{Hello World}
+   return 0;
+}
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+\begin{pygmented}[lang=python,mathescape]
+# Returns $\sum_{i=1}^{n}i$
+def sum_from_one_to(n):
+    r = range(1, n + 1)
+    return sum(r)
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+\begin{pygmented}[lang=c,escapeinside=||]
+
+if (|\textit{condition}|)
+    |\textit{command$_1$}|
+else
+    |\textit{command$_2$}|
+\end{pygmented}
+\end{Example}
 
 
 \section{Enclosing command and environment}
@@ -203,115 +320,6 @@ IDENTIFICATION DIVISION.
            STOP RUN.
 \end{pygmented}
 \end{Example}
-
-\section{Numbering lines}
-
-The lines of a listing can be numbered. The followig options control
-numbering of lines.
-\begin{itemize}
-  \item Line numbering is enabled or disable with the \verb|linenos|
-  boolean option.
-  \item The number used for the first line can be set with the option
-  \verb|linenostart|.
-  \item The step between numbered lines can be set with the option
-  \verb|linenostep|.
-  \item The space between the line number and the line of the listing
-  can be set with the option \verb|linenosep|.
-\end{itemize}
-
-In the followig listing you can see a Scheme function to calculate the
-factorial of a number.
-
-\begin{Example}
-\begin{pygmented}[lang=scheme,linenos,linenostart=1001,linenostep=2,linenosep=1cm]
-;; Building a list of squares from 0 to 9.
-;; Note: loop is simply an arbitrary symbol used as
-;; a label. Any symbol will do.
- 
-(define (list-of-squares n)
-  (let loop ((i n) (res '()))
-    (if (< i 0)
-        res
-        (loop (- i 1) (cons (* i i) res)))))
-\end{pygmented}
-\end{Example}
-
-\section{Captioning}
-
-The option \verb|caption| can be used to set a caption for the listing.
-The option \verb|label| allows the assignment of a label to the listing.
-
-Here is an example:
-
-\begin{Example}
-\begin{pygmented}[lang=c++,label=lst:test,caption=A \textbf{C++} example]
-// This program adds two numbers and prints their sum.
-#include <iostream>
-int main()
-{
-  int a;
-  int b;
-  int sum;
-  sum = a + b;
-  std::cout << "The sum of " << a << " and " << b
-            << " is " << sum << "\n";
-  return 0;
-}
-\end{pygmented}
-\end{Example}
-
-\begin{Example}
-  Listing \ref{lst:test} is a C++ program.
-\end{Example}
-
-\section{Escaping to \LaTeX{} inside a code snippet}
-
-The option \verb|texcomments|, if set to \texttt{true}, enables \LaTeX{}
-comment lines. That is, LaTex markup in comment tokens is not escaped
-so that \LaTeX{} can render it.
-
-The \verb|mathescape|, if set to \texttt{true}, enables \LaTeX{} math
-mode escape in comments. That is, \verb|$...$| inside a comment will
-trigger math mode.
-
-The option \verb|escapeinside|, if set to a string of length two,
-enables escaping to \LaTeX{}. Text delimited by these two characters
-is read as \LaTeX{} code and typeset accordingly. It has no effect in
-string literals. It has no effect in comments if \verb|texcomments| or
-\verb|mathescape| is set.
-
-Some examples:
-
-\begin{Example}
-\begin{pygmented}[lang=c++,texcomments]
-#include <iostream>
-using namespace std;
-main()
-{
-   cout << "Hello World";  // prints \underline{Hello World}
-   return 0;
-}
-\end{pygmented}
-\end{Example}
-
-% \begin{Example}
-% \begin{pygmented}[lang=python,mathescape]
-% # Returns $\sum_{i=1}ˆ{n}i$
-% def sum_from_one_to(n):
-%     r = range(1, n + 1)
-%     return sum(r)
-% \end{pygmented}
-% \end{Example}
-
-\begin{Example}
-\begin{pygmented}[lang=c,escapeinside=||]
-if (|\textit{condition}|)
-    |\textit{command$_1$}|
-else
-    |\textit{command$_2$}|
-\end{pygmented}
-\end{Example}
-
 
 \section{More examples of inline code snippets}
 
