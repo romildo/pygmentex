@@ -79,7 +79,7 @@
 % Main options
 % =========================================================
 
-\newif\ifpygmented@opt@texcl
+\newif\ifpygmented@opt@texcomments
 \newif\ifpygmented@opt@mathescape
 \newif\ifpygmented@opt@linenos
 \newif\ifpygmented@left
@@ -100,7 +100,7 @@
   lang/.store in          = \pygmented@opt@lang,
   sty/.store in           = \pygmented@opt@style,
   escapeinside/.store in  = \pygmented@opt@escapeinside,
-  texcl/.is if            = pygmented@opt@texcl,
+  texcomments/.is if      = pygmented@opt@texcomments,
   mathescape/.is if       = pygmented@opt@mathescape,
   % 
   label/.store in         = \pygmented@opt@label,
@@ -117,7 +117,7 @@
   colback/.store in       = \pygmented@opt@colback,
   font/.store in          = \pygmented@opt@font,
   % 
-  texcl/.default          = true,
+  texcomments/.default    = true,
   mathescape/.default     = true,
   linenos/.default        = true,
 }

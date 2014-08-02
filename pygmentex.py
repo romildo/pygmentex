@@ -288,7 +288,7 @@ def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
     _fmter.style = get_style_by_name(stylename)
     _fmter._create_stylesheet()
 
-    _fmter.texcomments = get_bool_opt(opts, 'texcl', False)
+    _fmter.texcomments = get_bool_opt(opts, 'texcomments', False)
     _fmter.mathescape = get_bool_opt(opts, 'mathescape', False)
 
     if stylename not in usedstyles:
