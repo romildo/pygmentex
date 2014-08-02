@@ -129,7 +129,7 @@
   linenos       = false,
   linenosep     = 2pt,
   font          = \ttfamily,
-  tabsize       = 8,
+  tabsize       = 0,
 }
 
 % =========================================================
@@ -157,6 +157,8 @@
   % \typeout{\string\pygmented@global@options:}\typeout{\meaning\pygmented@global@options}%
   % \typeout{\string\remainingglobaloptions:}\typeout{\meaning\remainingglobaloptions}%
   % \typeout{\string\remaininguseroptions:}\typeout{\meaning\remaininguseroptions}%
+  % 
+  \fvset{gobble=0,tabsize=0}%
 }
 
 \newcommand\pygmented@process@adicional@options[1]{%
@@ -194,7 +196,6 @@
 
 \newenvironment{pygmented}[1][]{%
   \pygmented@process@options{#1}%
-  \fvset{tabsize=\pygmented@opt@tabsize}%
   \immediate\write\pygmented@outfile{<@@pygmented@display@\the\pygmented@counter}%
   \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
   \VerbatimEnvironment
@@ -246,16 +247,22 @@
   \ifdefined\pygmented@opt@label
     \def\pygmented@title{%
       \captionof{code}{\label{\pygmented@opt@label}\pygmented@opt@caption}%
-      \vskip -0.7\baselineskip}%
+      % \nopagebreak
+      \vskip -0.7\baselineskip
+    }%
   \else
     \ifdefined\pygmented@opt@caption
       \def\pygmented@title{%
         \captionof{code}{\pygmented@opt@caption}%
-        \vskip -0.7\baselineskip}%
+        % \nopagebreak
+        \vskip -0.7\baselineskip
+      }%
     \fi
   \fi
   \ifdefined\pygmented@title
+    % \nopagebreak[0]%
     \pygmented@title
+    % \nopagebreak
   \fi
   %
   \pygmented@process@adicional@options{\pygmented@opt@boxing@method}%
