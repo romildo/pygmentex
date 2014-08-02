@@ -22,19 +22,16 @@
 \definecolor{shadecolor}{rgb}{0.9,0.9,0.9}
 \definecolor{lightgreen}{rgb}{0.8,0.95,0.8}
 
-\def\a{Bla bla bla bla bla bla bla bla bla bla bla.}
-\def\b{\a\a\a\a\a}
-
 \begin{document}
 
-\title{Testing Pygmen\TeX}
-\author{José Romildo}
+\title{Testing the Pygmen\TeX{} package}
+\author{José Romildo Malaquias}
 \maketitle
 
 \section{The Pygmen\TeX{} package}
 
-This document demonstrates how to use the pygment\TeX{} package to typeset
-code listings with \LaTeX{} and
+This document demonstrates how to use the Pygment\TeX{} package to
+typeset code listings with \LaTeX{} and
 Pygments\footnote{\url{http://pygments.org/}}.
 
 Pygments is a generic syntax highlighter for general use in all kinds of
@@ -44,16 +41,17 @@ prettify source code.
 Pygmen\TeX{} provides an environment and two commands for typesetting code
 listings in a \LaTeX{} document:
 \begin{itemize}
-  \item the \texttt{pygmented} environment typesets its contents,
-  \item the \texttt{includepygmented} command typesets the contents of a
+  \item the \verb|pygmented| environment typesets its contents as a
+  source code listing,
+  \item the \verb|includepygmented| command typesets the contents of a
   file, including the result in the \LaTeX{} document, and
-  \item the \texttt{pyginline} command typesets its contents, keeping
-  the result in the same line.
+  \item the \verb|\pyginline| command typesets its contents, keeping the
+  result in the same line.
 \end{itemize}
 They accept many options that allow the user to configure the listing in
 many ways.
 
-Read the remaining of this document to have an ided of what the package
+Read the remaining of this document to have an idea of what the package
 is capable of.
 
 \section{How to use the package}
@@ -65,85 +63,222 @@ In order to use the package, start by putting
 in the preamble of the document.
 
 Use the environment or commands mentioned previously to include source
-listings on your document.
+code listings on your document.
 
 When compiling the document (with \texttt{pdflatex}, for instance), all
-the source listings in the document wil be collected and saved in a
+the source code listings in the document wil be collected and saved in a
 temporary file with the extension \texttt{.snippets} in its name. Then
 the auxiliary program \texttt{pygmentex} (a Python application
-distributed with the pygmen\TeX{} package) should be run taking this
+distributed with the Pygmen\TeX{} package) should be run taking this
 file as input. It will produce another temporary file with the extension
-\texttt{.pygmented} containing \LaTeX{} code for the code listings
+\texttt{.pygmented}, containing \LaTeX{} code for the code listings
 previously collected. The next time the document is compiled, they are
 included to produce the final typeset document.
 
-\section{First example}
+The programming language of the listing code can be specified using the
+\verb|lang| option.
 
-See listing \ref{lst:a} for an example.
+\section{First examples}
+
+The followig C program reads two integers and calculates their sum.
 
 \begin{Example}
-\begin{pygmented}[boxing method=mdframed,
-  lang=scheme,
-  linenos,
-  linenostart=1001,
-  linenosep=2cm,
-  colback=red!16,
-  label=lst:a,
-  caption=My \emph{first} examples.,
-  frametitle=A \textbf{Scheme} program.,
-  ]
-(define fact
-    (lambda (n)
-        (if (= n 0)
-            1
-            (* n (fact (- n 1))))))
-
+\begin{pygmented}[lang=c]
+#include <stdio.h>
+int main(void)
+{
+   int a, b, c;
+   printf("Enter two numbers to add: ");
+   scanf("%d%d", &a, &b);
+   c = a + b;
+   printf("Sum of entered numbers = %d\n", c);
+   return 0;
+}
 \end{pygmented}
 \end{Example}
 
 \begin{Example}
-\begin{pygmented}[boxing method=tcolorbox,
-  lang=scheme,
-  linenos,
-  linenostart=10001,
-  linenosep=2cm,
-  colback=green!16,
-  label=lst:b,
-  caption=My \emph{first} examples.,
-  title=A \textbf{Scheme} program
-  ]
-(define fact
-    (lambda (n)
-        (if (= n 0)
-            1
-            (* n (fact (- n 1))))))
+  In this program, \pyginline[lang=c]|int| is a type and
+  \pyginline[lang=c]|"Enter two numbers to add: "| is a literal string.
+\end{Example}
+
+Next you can see a Java program to calculate the factorial of a number.
+
+\begin{Example}
+\inputpygmented[lang=java]{Factorial.java}
+\end{Example}
+
+\section{Enclosing command and environment}
+
+After being prettified by Pygments, the listings are enclosed in a
+command (for \verb|\pyginline|) or in an environment (for
+\verb|pygmented| and \verb|includepygmented|). By default
+\verb|\pyginline| uses the command \verb|\efbox| from the \texttt{efbox}
+package, and \verb|pygmented| and \verb|includepygmented| use the
+environment \verb|mdframed| from the \texttt{mdframed} package.
+
+The enclosing command or environment should be configurable using a list
+of key-value pairs written between square brackets.
+
+The enclosing command for
+\verb|\pyginline| can be changed with the option
+\verb|inline method|. For instance, in the following the command
+\verb|\tcbox| from the \verb|tcolorbox| package is used:
+
+\begin{Example}
+  In the previous Java program,
+  \pyginline[lang=java,inline method=tcbox]|"Factorial of "| is a
+  literal string.
+\end{Example}
+
+The enclosing environment for \verb|pygmented| and
+\verb|includepygmented| can be changed with the option
+\verb|boxing method|. For instance, here is a hello world program in
+C\#, enclosed in a \verb|tcolorbox| environment:
+
+\begin{Example}
+\begin{pygmented}[lang=csharp,boxing method=tcolorbox]
+using System;
+class Program
+{
+    public static void Main(string[] args)
+    {
+        Console.WriteLine("Hello, world!");
+    }
+}
+\end{pygmented}
+\end{Example}
+
+Any option unknown to Pygmen\TeX{} are passed to the enclosing command
+or environment.
+
+For instance:
+
+\begin{Example}
+\begin{pygmented}[lang=cobol,boxing method=tcolorbox,
+                  title=\emph{Hello world} in Cobol,
+                  coltitle=blue!90!black,colbacktitle=yellow!22]
+IDENTIFICATION DIVISION.
+       PROGRAM-ID. HELLO-WORLD.
+       PROCEDURE DIVISION.
+           DISPLAY 'Hello, world!'.
+           STOP RUN.
+\end{pygmented}
+\end{Example}
+
+\section{Numbering lines}
+
+The lines of a listing can be numbered. The followig options control
+numbering of lines.
+\begin{itemize}
+  \item Line numbering is enabled or disable with the \verb|linenos|
+  boolean option.
+  \item The number used for the first line can be set with the option
+  \verb|linenostart|.
+  \item The step between numbered lines can be set with the option
+  \verb|linenostep|.
+  \item The space between the line number and the line of the listing
+  can be set with the option \verb|linenosep|.
+\end{itemize}
+
+In the followig listing you can see a Scheme function to calculate the
+factorial of a number.
+
+\begin{Example}
+\begin{pygmented}[lang=scheme,linenos,linenostart=1001,linenostep=2,linenosep=1cm]
+;; Building a list of squares from 0 to 9.
+;; Note: loop is simply an arbitrary symbol used as
+;; a label. Any symbol will do.
+ 
+(define (list-of-squares n)
+  (let loop ((i n) (res '()))
+    (if (< i 0)
+        res
+        (loop (- i 1) (cons (* i i) res)))))
+\end{pygmented}
+\end{Example}
+
+\section{Captioning}
+
+The option \verb|caption| can be used to set a caption for the listing.
+The option \verb|label| allows the assignment of a label to the listing.
+
+Here is an example:
+
+\begin{Example}
+\begin{pygmented}[lang=c++,label=lst:test,caption=A \textbf{C++} example]
+// This program adds two numbers and prints their sum.
+#include <iostream>
+int main()
+{
+  int a;
+  int b;
+  int sum;
+  sum = a + b;
+  std::cout << "The sum of " << a << " and " << b
+            << " is " << sum << "\n";
+  return 0;
+}
 \end{pygmented}
 \end{Example}
 
 \begin{Example}
-\begin{pygmented}[boxing method=boite,
-  lang=scheme,
-  linenos,
-  linenostart=10001,
-  linenosep=2cm,
-  colback=yellow!16,
-  label=lst:c,
-  caption=My \emph{first} examples.,
-  title=A \textbf{Scheme} program.,
-  ]
-(define fact
-    (lambda (n)
-        (if (= n 0)
-            1
-            (* n (fact (- n 1))))))
+  Listing \ref{lst:test} is a C++ program.
+\end{Example}
+
+\section{Escaping to \LaTeX{} inside a code snippet}
+
+The option \verb|texcomments|, if set to \texttt{true}, enables \LaTeX{}
+comment lines. That is, LaTex markup in comment tokens is not escaped
+so that \LaTeX{} can render it.
+
+The \verb|mathescape|, if set to \texttt{true}, enables \LaTeX{} math
+mode escape in comments. That is, \verb|$...$| inside a comment will
+trigger math mode.
+
+The option \verb|escapeinside|, if set to a string of length two,
+enables escaping to \LaTeX{}. Text delimited by these two characters
+is read as \LaTeX{} code and typeset accordingly. It has no effect in
+string literals. It has no effect in comments if \verb|texcomments| or
+\verb|mathescape| is set.
+
+Some examples:
+
+\begin{Example}
+\begin{pygmented}[lang=c++,texcomments]
+#include <iostream>
+using namespace std;
+main()
+{
+   cout << "Hello World";  // prints \underline{Hello World}
+   return 0;
+}
+\end{pygmented}
+\end{Example}
+
+% \begin{Example}
+% \begin{pygmented}[lang=python,mathescape]
+% # Returns $\sum_{i=1}ˆ{n}i$
+% def sum_from_one_to(n):
+%     r = range(1, n + 1)
+%     return sum(r)
+% \end{pygmented}
+% \end{Example}
+
+\begin{Example}
+\begin{pygmented}[lang=c,escapeinside=||]
+if (|\textit{condition}|)
+    |\textit{command$_1$}|
+else
+    |\textit{command$_2$}|
 \end{pygmented}
 \end{Example}
 
 
-\section{Inline code snippets}
+\section{More examples of inline code snippets}
 
 An inline source code snippet:
-\pyginline[lang=c]|const double alfa = 3.14159;|
+\pyginline[lang=c]|const double alfa = 3.14159;|.
 This is a C declaration with initialization.
 
 \pyginline[lang=prolog,colback=yellow]=avo(A,B) :- pai(A,X), pai(X,B).=
@@ -168,7 +303,7 @@ Now some Java code:
 \pyginline[lang=java,sty=colorful,font=\ttfamily\itshape,linewidth=1pt]|public int f(double x)|.
 This is a method header.
 
-\section{Displayed code snippets}
+\section{More examples of displayed code snippets}
 
 \setpygmented{lang=scheme,colback=shadecolor,sty=emacs}
 
@@ -233,24 +368,12 @@ A Python code snippet:
   colback=lightgreen
   ]{demo.py}
 
-\section{Escaping to \LaTeX{} in code snippets}
-
-\begin{pygmented}[lang=c,sty=manni,escapeinside=||,
-  % caption=Conditional command.
-  ]
-if (|\textit{condition}|)
-  |\textit{command$_1$}|
-else
-  |\textit{command$_2$}|
-\end{pygmented}
-
-
 \section{Using code snippets in environments}
 
 The following is a \textbf{description} environment.
 
 \begin{description}
-  \item[An item] \a
+  \item[An item] \lipsum[31]
   \begin{pygmented}[lang=scala,colback=yellow,
     % title=Item A
     ]
@@ -263,23 +386,17 @@ def qsort(xs: List[Int]): List[Int] =
         pivot :: qsort(tail filter { _ >= pivot })
   }
   \end{pygmented}
-  \b
+  \lipsum[32]
   
-  \item[Another item] \a
+  \item[Another item] \lipsum[33]
   \begin{pygmented}[lang=lua,colback=yellow]
---- Spawn a program.
--- @param cmd The command.
--- @param sn Enable startup-notification.
--- @param screen The screen where to spawn window.
--- @return The awesome.spawn return value.
-function spawn(cmd, sn, screen)
-    if cmd and cmd ~= "" then
-        if sn == nil then sn = true end
-        return capi.awesome.spawn(cmd, sn, screen or capi.mouse.screen)
-    end
+function entry0 (o)
+  N=N + 1
+  local title = o.title or '(no title)'
+  fwrite('<LI><A HREF="#%d">%s</A>\n', N, title)
 end
   \end{pygmented}
-  \b
+  \lipsum[34]
 \end{description}
 
 \section{A long program}
