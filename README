@@ -16,3 +16,5 @@ The file pygmentex.sty should be installed in a directory where TeX
 searches for input files.
 
 The file demo.pdf demonstrates the use of the package.
+
+PygmenTeX is licensed under Latex Project Public License (version 1.3).
