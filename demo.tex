@@ -78,6 +78,12 @@ included to produce the final typeset document.
 The programming language of the listing code can be specified using the
 \verb|lang| option.
 
+To get a list of all available languages, execute the following command
+on the command line:
+\begin{verbatim}
+$ pygmentize -L lexers
+\end{verbatim}
+
 \section{First examples}
 
 The followig C program reads two integers and calculates their sum.
@@ -107,6 +113,93 @@ Next you can see a Java program to calculate the factorial of a number.
 \begin{Example}
 \inputpygmented[lang=java]{Factorial.java}
 \end{Example}
+
+\section{Choosing different Pygments styles}
+
+Instead of using the default style you may choose another stylesheet
+provided by Pygments by its name using the \verb|sty| option.
+
+To get a list of all available stylesheets, execute the following
+command on the command line:
+\begin{verbatim}
+$ pygmentize -L styles
+\end{verbatim}
+
+Creating your own styles is also very easy. Just follow the instructions
+provided on the website.
+
+As examples you can see a C program typeset with different styles.
+
+\begin{Example}
+\noindent
+\begin{minipage}[t]{0.49\linewidth}
+  \begin{pygmented}[lang=c,gobble=4,sty=murphy]
+    #include<stdio.h> 
+    main()
+    { int n;
+      printf("Enter a number: ");
+      scanf("%d",&n);
+      if ( n%2 == 0 )
+         printf("Even\n");
+      else
+         printf("Odd\n");
+      return 0;
+    }
+  \end{pygmented}
+\end{minipage}
+\hfil
+\begin{minipage}[t]{0.49\linewidth}
+  \begin{pygmented}[lang=c,gobble=4,sty=trac]
+    #include<stdio.h> 
+    main()
+    { int n;
+      printf("Enter a number: ");
+      scanf("%d",&n);
+      if ( n%2 == 0 )
+         printf("Even\n");
+      else
+         printf("Odd\n");
+      return 0;
+    }
+  \end{pygmented}
+\end{minipage}
+\end{Example}
+
+\section{Choosing a font}
+
+The value of the option \verb|font| is typeset before the content of the
+listing. Usualy it is used to specify a font to be used. See the
+following example.
+
+\begin{Example}
+\begin{pygmented}[lang=scala,font=\rmfamily\scshape\large]
+object bigint extends Application {
+  def factorial(n: BigInt): BigInt =
+    if (n == 0) 1 else n * factorial(n-1)
+
+  val f50 = factorial(50); val f49 = factorial(49)
+  println("50! = " + f50)
+  println("49! = " + f49)
+  println("50!/49! = " + (f50 / f49))
+}
+\end{pygmented}
+\end{Example}
+
+\section{Changing the background color}
+
+The option \verb|colback| can be used to choose a background color, as
+is shown in the folowing example.
+
+\begin{Example}
+\begin{pygmented}[lang=fsharp,colback=green!25]
+let rec factorial n = 
+    if n = 0 
+    then 1 
+    else n * factorial (n - 1)
+System.Console.WriteLine(factorial anInt)
+\end{pygmented}
+\end{Example}
+
 
 \section{Supressing initial characters}
 
@@ -310,10 +403,8 @@ or environment.
 For instance:
 
 \begin{Example}
-\begin{pygmented}[lang=cobol,boxing method=tcolorbox,
-                  title=\emph{Hello world} in Cobol,
-                  coltitle=blue!90!black,colbacktitle=yellow!22]
-IDENTIFICATION DIVISION.
+\begin{pygmented}[lang=cobol,boxing method=tcolorbox,colframe=red,boxrule=2mm]
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. HELLO-WORLD.
        PROCEDURE DIVISION.
            DISPLAY 'Hello, world!'.
@@ -321,33 +412,94 @@ IDENTIFICATION DIVISION.
 \end{pygmented}
 \end{Example}
 
+\section{Setting global options for Pygmen\TeX{}}
+
+Global options can be setting using the \verb|setpygmented| command.
+See the examples that follows.
+
+\begin{Example}
+\setpygmented{lang=Haskell, colback=red!30, font=\ttfamily\small}
+
+\begin{pygmented}[]
+sum :: Num a => [a] -> a
+sum [] = 0
+sum (x:xs) = x + sum xs
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+\begin{pygmented}[colback=blue!20, boxing method=tcolorbox]
+elem :: Eq a => a -> [a] -> Bool
+elem _ [] = False
+elem x (y:ys) = x == y || elem x ys
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+\setpygmented{lang=snobol}
+
+\begin{pygmented}[]
+          OUTPUT = "What is your name?"
+          Username = INPUT
+          OUTPUT = "Thank you, " Username
+END
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+\setpygmented{test/.style={colback=yellow!33,boxing method=tcolorbox,colframe=blue}}
+
+\begin{pygmented}[test, lang=vbnet]
+Module Module1
+    Sub Main() 
+        Console.WriteLine("Hello, world!")
+    End Sub
+End Module
+\end{pygmented}
+\end{Example}
+
+\begin{Example}
+\begin{pygmented}[lang=tcl]
+puts "Hello, world!"
+\end{pygmented}
+\end{Example}
+
 \section{More examples of inline code snippets}
 
-An inline source code snippet:
-\pyginline[lang=c]|const double alfa = 3.14159;|.
-This is a C declaration with initialization.
+\begin{Example}
+  An inline source code snippet:
+  \pyginline[lang=c]|const double alfa = 3.14159;|.
+  This is a C declaration with initialization.
+\end{Example}
 
-\pyginline[lang=prolog,colback=yellow]=avo(A,B) :- pai(A,X), pai(X,B).=
-is a Prolog clause. Its head is
-\pyginline[lang=prolog,sty=emacs,colback=yellow,linecolor=red]=avo(A,B)=
-and its body is
-\pyginline[lang=prolog,sty=vim,colback=black,hidealllines]=pai(A,X), pai(X,B)=.
+\begin{Example}
+  \pyginline[lang=prolog,colback=yellow]=avo(A,B) :- pai(A,X), pai(X,B).=
+  is a Prolog clause. Its head is
+  \pyginline[lang=prolog,sty=emacs,colback=yellow,linecolor=red]=avo(A,B)=
+  and its body is
+  \pyginline[lang=prolog,sty=vim,colback=black,hidealllines]=pai(A,X), pai(X,B)=.
+\end{Example}
 
-See the identifier
-\pyginline[inline method=efbox,colback=green!25]|variable|, which names
-something. String literals in C looks like
-\pyginline[lang=c,inline method=tcbox,colback=blue!20,boxrule=2pt]|"hello, world!\n"|.
+\begin{Example}
+  See the identifier \pyginline[inline method=efbox,colback=green!25]|variable|,
+  which names something. String literals in C looks like
+  \pyginline[lang=c,inline method=tcbox,colback=blue!20,boxrule=2pt]|"hello, world!\n"|.
+\end{Example}
 
 \setpygmented{colback=shadecolor}
 
-This one
-\pyginline[lang=ocaml,font=\ttfamily\scriptsize,topline=false]:let x = [1;2;3] in length x:
-is an OCaml expression with local bindings. With OCaml one can do
-imperative, functional and object oriented programming.
+\begin{Example}
+  This one
+  \pyginline[lang=ocaml,font=\ttfamily\scriptsize,topline=false]:let x = [1;2;3] in length x:
+  is an OCaml expression with local bindings. With OCaml one can do
+  imperative, functional and object oriented programming.
+\end{Example}
 
-Now some Java code:
-\pyginline[lang=java,sty=colorful,font=\ttfamily\itshape,linewidth=1pt]|public int f(double x)|.
-This is a method header.
+\begin{Example}
+  Now some Java code:
+  \pyginline[lang=java,sty=colorful,font=\ttfamily\itshape,linewidth=1pt]|public int f(double x)|.
+  This is a method header.
+\end{Example}
 
 \section{More examples of displayed code snippets}
 
@@ -697,10 +849,8 @@ int main(int argc, char **argv) {
 \end{pygmented}
 
 
-
 \section{Conclusion}
 
 That is all.
-
 
 \end{document}
