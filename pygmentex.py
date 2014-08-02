@@ -8,11 +8,11 @@
     PygmenTeX is a converter that do syntax highlighting of snippets of
     source code extracted from a LaTeX file.
 
-    :copyright: Copyright 2010 by José Romildo Malaquias
+    :copyright: Copyright 2014 by José Romildo Malaquias
     :license: BSD, see LICENSE for details
 """
 
-__version__ = '0.6'
+__version__ = '0.7'
 __docformat__ = 'restructuredtext'
 
 import sys
@@ -20,178 +20,11 @@ import getopt
 import re
 from os.path import splitext
 
-from pygments import highlight, lex, format
+from pygments import highlight, format
 from pygments.styles import get_style_by_name
 from pygments.lexers import get_lexer_by_name
-from pygments.formatters.latex import LatexFormatter, _get_ttype_name, escape_tex
+from pygments.formatters.latex import LatexEmbeddedLexer, LatexFormatter
 from pygments.util import get_bool_opt, get_int_opt
-from pygments.lexer import Lexer
-from pygments.token import Token
-
-class LatexEmbededLexer(Lexer):
-    r"""
-
-    This is a lexer that looks for escaped LaTeX code segments inside
-    the text to be scanned.
-
-    This lexer takes one lexer as argument, the lexer for the language
-    being formatted, and the left and right delimiters for escaped text.
-
-    First everything is scanned using the language lexer to obtain
-    strings and comments. All other consecutive tokens are merged and
-    the resulting text is scanned for escaped segments, which are given
-    the Token.Escape type. Finally text that is not escaped is scanned
-    again with the language lexer.
-    """
-    def __init__(self, left, right, lang, **options):
-        self.left = left
-        self.right = right
-        self.lang = lang
-        Lexer.__init__(self, **options)
-
-    def get_tokens_unprocessed(self, text):
-        buf = ''
-        for i, t, v in self.lang.get_tokens_unprocessed(text):
-            if t in Token.Comment or t in Token.String:
-                if len(buf) > 0:
-                    for x in self.get_tokens_aux(idx, buf):
-                        yield x
-                    buf = ''
-                yield i, t, v
-            else:
-                if len(buf) == 0:
-                    idx = i;
-                buf = buf + v
-        if len(buf) > 0:
-            for x in self.get_tokens_aux(idx, buf):
-                yield x
-
-    def get_tokens_aux(self, index, text):
-        while len(text) > 0:
-            a, sep1, text = text.partition(self.left)
-            if len(a) > 0:
-                for i, t, v in self.lang.get_tokens_unprocessed(a):
-                    yield index + i, t, v
-                    index = index + len(a)
-            if len(sep1) > 0:
-                b, sep2, text = text.partition(self.right)
-                if len(sep2) > 0:
-                    yield index + len(sep1), Token.Escape, b
-                    index = index + len(sep1) + len(b) + len(sep2)
-                else:
-                    yield index, Token.Error, sep1
-                    index = index + len(sep1)
-                    text = b
-
-
-
-
-class EnhancedLatexFormatter(LatexFormatter):
-    r"""
-    This is an enhanced LaTeX formatter.
-    """
-
-    name = 'EnhancedLaTeX'
-    aliases = []
-
-    def __init__(self, **options):
-        LatexFormatter.__init__(self, **options)
-        self.escapeinside = ''
-        self.left = None
-        self.right = None
-
-    def format_unencoded(self, tokensource, outfile):
-        # TODO: add support for background colors
-        t2n = self.ttype2name
-        cp = self.commandprefix
-
-        if self.full:
-            realoutfile = outfile
-            outfile = StringIO()
-
-        outfile.write(r'\begin{Verbatim}[commandchars=\\\{\}')
-        if self.linenos:
-            start, step = self.linenostart, self.linenostep
-            outfile.write(u',numbers=left' +
-                          (start and u',firstnumber=%d' % start or u'') +
-                          (step and u',stepnumber=%d' % step or u''))
-        if self.mathescape or self.texcomments or self.escapeinside:
-            outfile.write(r',codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}')
-        if self.verboptions:
-            outfile.write(u',' + self.verboptions)
-        outfile.write(u']\n')
-
-        for ttype, value in tokensource:
-            if ttype in Token.Comment:
-                if self.texcomments:
-                    # Try to guess comment starting lexeme and escape it ...
-                    start = value[0:1]
-                    for i in xrange(1, len(value)):
-                        if start[0] != value[i]:
-                            break
-                        start += value[i]
-
-                    value = value[len(start):]
-                    start = escape_tex(start, self.commandprefix)
-
-                    # ... but do not escape inside comment.
-                    value = start + value
-                elif self.mathescape:
-                    # Only escape parts not inside a math environment.
-                    parts = value.split('$')
-                    in_math = False
-                    for i, part in enumerate(parts):
-                        if not in_math:
-                            parts[i] = escape_tex(part, self.commandprefix)
-                        in_math = not in_math
-                    value = '$'.join(parts)
-                elif self.escapeinside:
-                    text = value
-                    value = ''
-                    while len(text) > 0:
-                        a,sep1,text = text.partition(self.left)
-                        if len(sep1) > 0:
-                            b,sep2,text = text.partition(self.right)
-                            if len(sep2) > 0:
-                                value = value + escape_tex(a, self.commandprefix) + b
-                            else:
-                                value = value + escape_tex(a + sep1 + b, self.commandprefix)
-                        else:
-                            value = value + escape_tex(a, self.commandprefix)
-                else:
-                    value = escape_tex(value, self.commandprefix)
-            elif not (ttype in Token.Escape):
-                value = escape_tex(value, self.commandprefix)
-            styles = []
-            while ttype is not Token:
-                try:
-                    styles.append(t2n[ttype])
-                except KeyError:
-                    # not in current style
-                    styles.append(_get_ttype_name(ttype))
-                ttype = ttype.parent
-            styleval = '+'.join(reversed(styles))
-            if styleval:
-                spl = value.split('\n')
-                for line in spl[:-1]:
-                    if line:
-                        outfile.write("\\%s{%s}{%s}" % (cp, styleval, line))
-                    outfile.write('\n')
-                if spl[-1]:
-                    outfile.write("\\%s{%s}{%s}" % (cp, styleval, spl[-1]))
-            else:
-                outfile.write(value)
-
-        outfile.write(u'\\end{Verbatim}\n')
-
-        if self.full:
-            realoutfile.write(DOC_TEMPLATE %
-                dict(docclass  = self.docclass,
-                     preamble  = self.preamble,
-                     title     = self.title,
-                     encoding  = self.encoding or 'utf8',
-                     styledefs = self.get_style_defs(),
-                     code      = outfile.getvalue()))
 
 
 GENERIC_DEFINITIONS_1 = r'''% -*- mode: latex -*-
@@ -242,7 +75,7 @@ def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
         return ""
 
     # global _fmter
-    _fmter = EnhancedLatexFormatter()
+    _fmter = LatexFormatter()
 
     escapeinside = opts.get('escapeinside', '')
     if len(escapeinside) == 2:
@@ -251,7 +84,7 @@ def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
         _fmter.escapeinside = escapeinside
         _fmter.left = left
         _fmter.right = right
-        lexer = LatexEmbededLexer(left, right, lexer)
+        lexer = LatexEmbeddedLexer(left, right, lexer)
 
     gobble = abs(get_int_opt(opts, 'gobble', 0))
     if gobble:
