@@ -108,6 +108,44 @@ Next you can see a Java program to calculate the factorial of a number.
 \inputpygmented[lang=java]{Factorial.java}
 \end{Example}
 
+\section{Supressing initial characters}
+
+The option \verb|gobble| specifies the number of characters to suppress
+at the beginning of each line (up to a maximum of 9). This is mainly
+useful when environments are indented (Default: empty — no character
+suppressed).
+
+\begin{Example}
+A code snippet inside a minipage:
+\begin{minipage}{.5\linewidth}
+  \begin{pygmented}[lang=d,gobble=4]
+    ulong fact(ulong n)
+    {
+      if(n < 2)
+        return 1;
+      else
+        return n * fact(n - 1);
+    }
+  \end{pygmented}
+\end{minipage}
+\end{Example}
+
+
+% \section{Size of tabulator}
+
+% The option \verb|tabsize| specifies the number of of spaces given by a
+% tab character (Default: 8).
+
+% \begin{Example}
+% \begin{pygmented}[lang=lisp,tabsize=5]
+% ;; Triple the value of a number
+% (defun triple (X)
+% 	"Compute three times X."
+% 	(* 3 X))
+% \end{pygmented}
+% \end{Example}
+
+
 \section{Enclosing command and environment}
 
 After being prettified by Pygments, the listings are enclosed in a
@@ -541,7 +579,7 @@ end.
   frametitle={%
     \tikz[baseline=(current bounding box.east),outer sep=0pt]
     \node[anchor=east,rectangle,fill=blue!20]
-    {\strut Saying \emph{hello} em Eiffel};},
+    {\strut Saying \emph{hello} in Eiffel};},
   innertopmargin=10pt,linecolor=blue!20,%
   linewidth=2pt,topline=true,
   frametitleaboveskip=\dimexpr-\ht\strutbox\relax,
