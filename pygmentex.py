@@ -20,12 +20,178 @@ import getopt
 import re
 from os.path import splitext
 
-from pygments import highlight, format
+from pygments import highlight
 from pygments.styles import get_style_by_name
 from pygments.lexers import get_lexer_by_name
-from pygments.formatters.latex import LatexEmbeddedLexer, LatexFormatter
+from pygments.formatters.latex import LatexFormatter, escape_tex, _get_ttype_name
 from pygments.util import get_bool_opt, get_int_opt
+from pygments.lexer import Lexer
+from pygments.token import Token
 
+###################################################
+# The following code is in >=pygments-2.0
+###################################################
+class EnhancedLatexFormatter(LatexFormatter):
+    r"""
+    This is an enhanced LaTeX formatter.
+    """
+    name = 'EnhancedLaTeX'
+    aliases = []
+
+    def __init__(self, **options):
+        LatexFormatter.__init__(self, **options)
+        self.escapeinside = options.get('escapeinside', '')
+        if len(self.escapeinside) == 2:
+            self.left = self.escapeinside[0]
+            self.right = self.escapeinside[1]
+        else:
+            self.escapeinside = ''
+
+    def format_unencoded(self, tokensource, outfile):
+        # TODO: add support for background colors
+        t2n = self.ttype2name
+        cp = self.commandprefix
+
+        if self.full:
+            realoutfile = outfile
+            outfile = StringIO()
+
+        outfile.write(u'\\begin{Verbatim}[commandchars=\\\\\\{\\}')
+        if self.linenos:
+            start, step = self.linenostart, self.linenostep
+            outfile.write(u',numbers=left' +
+                          (start and u',firstnumber=%d' % start or u'') +
+                          (step and u',stepnumber=%d' % step or u''))
+        if self.mathescape or self.texcomments or self.escapeinside:
+            outfile.write(u',codes={\\catcode`\\$=3\\catcode`\\^=7\\catcode`\\_=8}')
+        if self.verboptions:
+            outfile.write(u',' + self.verboptions)
+        outfile.write(u']\n')
+
+        for ttype, value in tokensource:
+            if ttype in Token.Comment:
+                if self.texcomments:
+                    # Try to guess comment starting lexeme and escape it ...
+                    start = value[0:1]
+                    for i in xrange(1, len(value)):
+                        if start[0] != value[i]:
+                            break
+                        start += value[i]
+
+                    value = value[len(start):]
+                    start = escape_tex(start, self.commandprefix)
+
+                    # ... but do not escape inside comment.
+                    value = start + value
+                elif self.mathescape:
+                    # Only escape parts not inside a math environment.
+                    parts = value.split('$')
+                    in_math = False
+                    for i, part in enumerate(parts):
+                        if not in_math:
+                            parts[i] = escape_tex(part, self.commandprefix)
+                        in_math = not in_math
+                    value = '$'.join(parts)
+                elif self.escapeinside:
+                    text = value
+                    value = ''
+                    while len(text) > 0:
+                        a,sep1,text = text.partition(self.left)
+                        if len(sep1) > 0:
+                            b,sep2,text = text.partition(self.right)
+                            if len(sep2) > 0:
+                                value += escape_tex(a, self.commandprefix) + b
+                            else:
+                                value += escape_tex(a + sep1 + b, self.commandprefix)
+                        else:
+                            value = value + escape_tex(a, self.commandprefix)
+                else:
+                    value = escape_tex(value, self.commandprefix)
+            elif ttype not in Token.Escape:
+                value = escape_tex(value, self.commandprefix)
+            styles = []
+            while ttype is not Token:
+                try:
+                    styles.append(t2n[ttype])
+                except KeyError:
+                    # not in current style
+                    styles.append(_get_ttype_name(ttype))
+                ttype = ttype.parent
+            styleval = '+'.join(reversed(styles))
+            if styleval:
+                spl = value.split('\n')
+                for line in spl[:-1]:
+                    if line:
+                        outfile.write("\\%s{%s}{%s}" % (cp, styleval, line))
+                    outfile.write('\n')
+                if spl[-1]:
+                    outfile.write("\\%s{%s}{%s}" % (cp, styleval, spl[-1]))
+            else:
+                outfile.write(value)
+
+        outfile.write(u'\\end{Verbatim}\n')
+
+        if self.full:
+            realoutfile.write(DOC_TEMPLATE %
+                dict(docclass  = self.docclass,
+                     preamble  = self.preamble,
+                     title     = self.title,
+                     encoding  = self.encoding or 'latin1',
+                     styledefs = self.get_style_defs(),
+                     code      = outfile.getvalue()))
+
+class LatexEmbeddedLexer(Lexer):
+    r"""
+
+    This lexer takes one lexer as argument, the lexer for the language
+    being formatted, and the left and right delimiters for escaped text.
+
+    First everything is scanned using the language lexer to obtain
+    strings and comments. All other consecutive tokens are merged and
+    the resulting text is scanned for escaped segments, which are given
+    the Token.Escape type. Finally text that is not escaped is scanned
+    again with the language lexer.
+    """
+    def __init__(self, left, right, lang, **options):
+        self.left = left
+        self.right = right
+        self.lang = lang
+        Lexer.__init__(self, **options)
+
+    def get_tokens_unprocessed(self, text):
+        buf = ''
+        for i, t, v in self.lang.get_tokens_unprocessed(text):
+            if t in Token.Comment or t in Token.String:
+                if buf:
+                    for x in self.get_tokens_aux(idx, buf):
+                        yield x
+                    buf = ''
+                yield i, t, v
+            else:
+                if not buf:
+                    idx = i
+                buf += v
+        if buf:
+            for x in self.get_tokens_aux(idx, buf):
+                yield x
+
+    def get_tokens_aux(self, index, text):
+        while text:
+            a, sep1, text = text.partition(self.left)
+            if a:
+                for i, t, v in self.lang.get_tokens_unprocessed(a):
+                    yield index + i, t, v
+                    index += len(a)
+            if sep1:
+                b, sep2, text = text.partition(self.right)
+                if sep2:
+                    yield index + len(sep1), Token.Escape, b
+                    index += len(sep1) + len(b) + len(sep2)
+                else:
+                    yield index, Token.Error, sep1
+                    index += len(sep1)
+                    text = b
+###################################################
 
 GENERIC_DEFINITIONS_1 = r'''% -*- mode: latex -*-
 
@@ -75,7 +241,7 @@ def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
         return ""
 
     # global _fmter
-    _fmter = LatexFormatter()
+    _fmter = EnhancedLatexFormatter()
 
     escapeinside = opts.get('escapeinside', '')
     if len(escapeinside) == 2:
