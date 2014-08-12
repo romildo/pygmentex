@@ -229,7 +229,7 @@ The option \verb|tabsize| specifies the number of of spaces given by a
 tab character (Default: 8).
 
 \begin{Verbatim}[showtabs,tabsize=1]
-\begin{pygmented}[lang=lisp,tabsize=4]
+\begin{pygmented}[lang=common-lisp,tabsize=4]
 ;; Triple the value of a number
 (defun triple	(X)
 	"Compute three times X."
@@ -237,7 +237,7 @@ tab character (Default: 8).
 \end{pygmented}
 \end{Verbatim}
 
-\begin{pygmented}[lang=lisp,tabsize=4]
+\begin{pygmented}[lang=common-lisp,tabsize=4]
 ;; Triple the value of a number
 (defun triple	(X)
 	"Compute three times X."
@@ -402,12 +402,14 @@ or environment.
 For instance:
 
 \begin{Example}
-\begin{pygmented}[lang=cobol,boxing method=tcolorbox,colframe=red,boxrule=2mm]
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. HELLO-WORLD.
-       PROCEDURE DIVISION.
-           DISPLAY 'Hello, world!'.
-           STOP RUN.
+\begin{pygmented}[lang=xml,boxing method=tcolorbox,colframe=red,boxrule=2mm]
+<!-- This is a note -->
+<note>
+   <to>Tove</to>
+   <from>Jani</from>
+   <heading>Reminder</heading>
+   <body>Don't forget me this weekend!</body>
+</note>
 \end{pygmented}
 \end{Example}
 
@@ -417,7 +419,7 @@ Global options can be setting using the \verb|setpygmented| command.
 See the examples that follows.
 
 \begin{Example}
-\setpygmented{lang=Haskell, colback=red!30, font=\ttfamily\small}
+\setpygmented{lang=haskell, colback=red!30, font=\ttfamily\small}
 
 \begin{pygmented}[]
 sum :: Num a => [a] -> a
@@ -738,7 +740,7 @@ end.
   frametitle={%
     \tikz[baseline=(current bounding box.east),outer sep=0pt]
     \node[anchor=east,rectangle,fill=blue!20]
-    {\strut Saying \emph{hello} in Eiffel};},
+    {\strut Saying \emph{hello} in Modula-2};},
   innertopmargin=10pt,linecolor=blue!20,%
   linewidth=2pt,topline=true,
   frametitleaboveskip=\dimexpr-\ht\strutbox\relax,
@@ -746,17 +748,12 @@ end.
   backgroundcolor=white,
 }
 
-\begin{pygmented}[boxing method=mdframed,lang=eiffel,style=separateheader]
-class
-    HELLO_WORLD
-create
-    make
-feature
-    make
-        do
-            print ("Hello, world!%N")
-        end
-end
+\begin{pygmented}[boxing method=mdframed,lang=modula2,style=separateheader]
+MODULE Hello;
+FROM STextIO IMPORT WriteString;
+BEGIN
+  WriteString("Hello World!");
+END Hello.
 \end{pygmented}
 
 
