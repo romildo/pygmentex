@@ -12,7 +12,7 @@
     :license: BSD, see LICENSE for details
 """
 
-__version__ = '0.7'
+__version__ = '0.8'
 __docformat__ = 'restructuredtext'
 
 import sys
