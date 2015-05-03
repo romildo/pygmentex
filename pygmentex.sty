@@ -13,9 +13,9 @@
 \RequirePackage{efbox}
 \RequirePackage[framemethod=tikz]{mdframed}
 
-%\DeclareCaptionType[within=chapter]{code}[Listagem][Lista de listagens]
-\DeclareCaptionType{code}[Listagem][Lista de listagens]
-\captionsetup[code]{position=top}
+%\DeclareCaptionType[within=chapter]{pygcode}[Listagem][Lista de listagens]
+\DeclareCaptionType{pygcode}[Listagem][Lista de listagens]
+\captionsetup[pygcode]{position=top}
 
 % =========================================================
 % Auxiliary:
@@ -246,14 +246,14 @@
   %
   \ifdefined\pygmented@opt@label
     \def\pygmented@title{%
-      \captionof{code}{\label{\pygmented@opt@label}\pygmented@opt@caption}%
+      \captionof{pygcode}{\label{\pygmented@opt@label}\pygmented@opt@caption}%
       % \nopagebreak
       \vskip -0.7\baselineskip
     }%
   \else
     \ifdefined\pygmented@opt@caption
       \def\pygmented@title{%
-        \captionof{code}{\pygmented@opt@caption}%
+        \captionof{pygcode}{\pygmented@opt@caption}%
         % \nopagebreak
         \vskip -0.7\baselineskip
       }%
