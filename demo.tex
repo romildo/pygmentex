@@ -8,7 +8,7 @@
 \usepackage{hyperref}
 \usepackage[framemethod=tikz]{mdframed}
 \usepackage{tcolorbox}
-\usepackage{fvrb-ex}
+\usepackage{fancyvrb-ex}
 \usepackage{tikz}
 \usepackage{calc}
 \usepackage{pygmentex}
@@ -84,6 +84,15 @@ $ pygmentize -L lexers
 \end{verbatim}
 
 \section{First examples}
+
+A simple verbatim text is the first example.
+
+\begin{Example}
+\begin{pygmented}[]
+Hello world!
+  This is a simple demonstration text.
+\end{pygmented}
+\end{Example}
 
 The followig C program reads two integers and calculates their sum.
 
