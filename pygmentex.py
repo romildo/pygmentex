@@ -8,11 +8,11 @@
     PygmenTeX is a converter that do syntax highlighting of snippets of
     source code extracted from a LaTeX file.
 
-    :copyright: Copyright 2014 by José Romildo Malaquias
+    :copyright: Copyright 2020 by José Romildo Malaquias
     :license: BSD, see LICENSE for details
 """
 
-__version__ = '0.9'
+__version__ = '0.10'
 __docformat__ = 'restructuredtext'
 
 import sys
@@ -481,7 +481,7 @@ def main(args = sys.argv):
         return 0
 
     if opts.pop('-V', None) is not None:
-        print('PygmenTeX version %s, (c) 2010 by José Romildo.' % __version__)
+        print('PygmenTeX version %s, (c) 2020 by José Romildo.' % __version__)
         return 0
  
     if len(args) != 1:
