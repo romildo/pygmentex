@@ -45,7 +45,7 @@ listings in a \LaTeX{} document:
 \begin{itemize}
   \item the \verb|pygmented| environment typesets its contents as a
   source code listing,
-  \item the \verb|includepygmented| command typesets the contents of a
+  \item the \verb|\inputpygmented| command typesets the contents of a
   file, including the result in the \LaTeX{} document, and
   \item the \verb|\pyginline| command typesets its contents, keeping the
   result in the same line.
@@ -371,9 +371,9 @@ else
 
 After being prettified by Pygments, the listings are enclosed in a
 command (for \verb|\pyginline|) or in an environment (for
-\verb|pygmented| and \verb|includepygmented|). By default
+\verb|pygmented| and \verb|inputpygmented|). By default
 \verb|\pyginline| uses the command \verb|\efbox| from the \texttt{efbox}
-package, and \verb|pygmented| and \verb|includepygmented| use the
+package, and \verb|pygmented| and \verb|inputpygmented| use the
 environment \verb|mdframed| from the \texttt{mdframed} package.
 
 The enclosing command or environment should be configurable using a list
@@ -391,7 +391,7 @@ The enclosing command for
 \end{Example}
 
 The enclosing environment for \verb|pygmented| and
-\verb|includepygmented| can be changed with the option
+\verb|inputpygmented| can be changed with the option
 \verb|boxing method|. For instance, here is a hello world program in
 C\#, enclosed in a \verb|tcolorbox| environment:
 
