@@ -152,7 +152,7 @@ As examples you can see a C program typeset with different styles.
 \noindent
 \begin{minipage}[t]{0.49\linewidth}
   \begin{pygmented}[lang=c,gobble=4,sty=murphy]
-    #include<stdio.h> 
+    #include<stdio.h>
     main()
     { int n;
       printf("Enter a number: ");
@@ -168,7 +168,7 @@ As examples you can see a C program typeset with different styles.
 \hfil
 \begin{minipage}[t]{0.49\linewidth}
   \begin{pygmented}[lang=c,gobble=4,sty=trac]
-    #include<stdio.h> 
+    #include<stdio.h>
     main()
     { int n;
       printf("Enter a number: ");
@@ -210,9 +210,9 @@ is shown in the folowing example.
 
 \begin{Example}
 \begin{pygmented}[lang=fsharp,colback=green!25]
-let rec factorial n = 
-    if n = 0 
-    then 1 
+let rec factorial n =
+    if n = 0
+    then 1
     else n * factorial (n - 1)
 System.Console.WriteLine(factorial anInt)
 \end{pygmented}
@@ -287,7 +287,7 @@ factorial of a number.
 ;; Building a list of squares from 0 to 9.
 ;; Note: loop is simply an arbitrary symbol used as
 ;; a label. Any symbol will do.
- 
+
 (define (list-of-squares n)
   (let loop ((i n) (res '()))
     (if (< i 0)
@@ -471,7 +471,7 @@ END
 
 \begin{pygmented}[test, lang=vbnet]
 Module Module1
-    Sub Main() 
+    Sub Main()
         Console.WriteLine("Hello, world!")
     End Sub
 End Module
@@ -605,7 +605,7 @@ def qsort(xs: List[Int]): List[Int] =
   }
   \end{pygmented}
   \lipsum[32]
-  
+
   \item[Another item] \lipsum[33]
   \begin{pygmented}[lang=lua,colback=yellow]
 function entry0 (o)
@@ -714,9 +714,9 @@ int main(int argc, char** argv) {
 /* This program prints a
    hello world message
    to the console.  */
- 
+
 import std.stdio;
- 
+
 void main()
 {
     writeln("Hello, World!");
@@ -735,7 +735,7 @@ The followig example uses \texttt{mdframed} to typeset the code listing.
 
 \begin{pygmented}[boxing method=mdframed,lang=ada,style=exampledefault]
 with Ada.Text_IO;
- 
+
 procedure Hello_World is
  use Ada.Text_IO;
 begin
@@ -749,7 +749,7 @@ end;
 
 \begin{pygmented}[boxing method=mdframed,lang=pascal,style=exampledefault,frametitle={Saying \emph{hello} from Pascal}]
 program HelloWorld;
- 
+
 begin
   WriteLn('Hello, world!');
 end.
@@ -824,9 +824,9 @@ END Hello.
 \begin{pygmented}[boxing method=mdframed,lang=go,style=exercisestyle]
 // hello world in 'go'
 package main
- 
+
 import "fmt"
- 
+
 func main() {
    fmt.Println("Hello, world!")
 }
@@ -837,7 +837,7 @@ func main() {
 
 #import <stdio.h>
 #import <Foundation/Foundation.h>
- 
+
 int main(void)
 {
     NSLog(@"Hello, world!\n");
