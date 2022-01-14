@@ -58,33 +58,29 @@ is capable of.
 
 \section{How to use the package}
 
-In order to use the package, start by putting
+\paragraph{1.} Add the package to the document preamble.
 \begin{verbatim}
 \usepackage{pygmentex}
 \end{verbatim}
-in the preamble of the document.
 
-Use the environment or commands mentioned previously to include source
+\paragraph{2.} Use the environment or commands mentioned previously to include source
 code listings on your document.
 
-When compiling the document (with \texttt{pdflatex}, for instance), all
-the source code listings in the document wil be collected and saved in a
-temporary file with the extension \texttt{.snippets} in its name. Then
-the auxiliary program \texttt{pygmentex} (a Python application
-distributed with the Pygmen\TeX{} package) should be run taking this
-file as input. It will produce another temporary file with the extension
+\paragraph{3.} Compile using \texttt{pdflatex}.\footnote{Other \LaTeX compilers
+may also work but have not been tested by the author.}
+All the source code listings in the document wil be collected and saved in a
+temporary file with the extension \texttt{.snippets} in its name.
+
+\paragraph{4.} Run \texttt{pygmentex documentname.snippets}.
+The python application \texttt{pygmentex} is
+distributed with the Pygmen\TeX{} package).
+It will produce another temporary file with the extension
 \texttt{.pygmented}, containing \LaTeX{} code for the code listings
 previously collected. The next time the document is compiled, they are
 included to produce the final typeset document.
 
-The programming language of the listing code can be specified using the
-\verb|lang| option.
+\paragraph{5.} Rerun \texttt{pdflatex} as usual.
 
-To get a list of all available languages, execute the following command
-on the command line:
-\begin{verbatim}
-$ pygmentize -L lexers
-\end{verbatim}
 
 \section{First examples}
 
@@ -124,6 +120,17 @@ Next you can see a Java program to calculate the factorial of a number.
 \begin{Example}
 \inputpygmented[lang=java]{Factorial.java}
 \end{Example}
+
+\section{Options}
+
+The programming language of the listing code can be specified using the
+\verb|lang| option.
+
+To get a list of all available languages, execute the following command
+on the command line:
+\begin{verbatim}
+$ pygmentize -L lexers
+\end{verbatim}
 
 \section{Choosing different Pygments styles}
 
