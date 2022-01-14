@@ -868,6 +868,11 @@ int main(int argc, char **argv) {
 }
 \end{pygmented}
 
+\section{Debugging}
+Paths given to \verb|\inputpygmented| should be relative to the top level project
+directory, not to the file that contains the command (if that file is in a
+subdirectory).  Pygmen\TeX generates only a single top-level \texttt{.snippets} file,
+and paths are not munged to account for code in subdirectories.
 
 \section{Conclusion}
 
