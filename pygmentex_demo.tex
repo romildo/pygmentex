@@ -85,6 +85,19 @@ included to produce the final typeset document.
 
 \paragraph{5.} Rerun \texttt{pdflatex} as usual.
 
+\paragraph{Note.} Running the external python application
+\texttt{pygmentex} can be done automatically from withing \LaTeX{} if
+the optional argument \texttt{--shell-escape} is used.
+
+With
+\begin{verbatim}
+pdflatex --shell-escape <file>
+\end{verbatim}
+the external run of \texttt{pygmentex} is not needed. It will be run
+automatically at the end of the document compilation.
+
+There is a package option \texttt{force} that will force running
+\texttt{pygmentex} every time the document is compiled.
 
 \section{First examples}
 

@@ -2,13 +2,19 @@
 
 \NeedsTeXFormat{LaTeX2e}
 
-\ProvidesPackage{pygmentex}[2020/12/21 v0.10 A Pygmentex layer for LaTeX]
+\ProvidesPackage{pygmentex}[2022/08/15 v0.11 A Pygmentex layer for LaTeX]
+
+\newif\ifpygmented@opt@force\pygmented@opt@forcefalse
+\DeclareOption{force}{\pygmented@opt@forcetrue}
+
+\ProcessOptions\relax
 
 \RequirePackage{fancyvrb}
 \RequirePackage{color}
 \RequirePackage{ifthen}
 %\RequirePackage[font=small,format=plain,labelfont=bf,up,textfont=it,up]{caption}
 \RequirePackage{caption}
+\RequirePackage{shellesc}
 \RequirePackage{pgfkeys}
 \RequirePackage{efbox}
 \RequirePackage[framemethod=tikz]{mdframed}
@@ -117,6 +123,7 @@
   colback/.store in       = \pygmented@opt@colback,
   font/.store in          = \pygmented@opt@font,
   % 
+  force/.default          = false,
   texcomments/.default    = true,
   mathescape/.default     = true,
   linenos/.default        = true,
@@ -383,7 +390,18 @@
 }
 
 \AtEndDocument{%
-  \closeout\pygmented@outfile%
+  \immediate\closeout\pygmented@outfile%
+  \ifpygmented@opt@force
+    \typeout{>>>> running pygmentex (option force=true) ...}%
+    \ShellEscape{pygmentex \jobname.snippets}%
+    \typeout{>>>> ... done.}%
+  \else
+    \IfFileExists{\jobname.pygmented}%
+      {\typeout{>>>> file \jobname.pygmented exists, not running pygmentex}}%
+      {\typeout{>>>> no file \jobname.pygmented, running pygmentex ...}%
+       \ShellEscape{pygmentex \jobname.snippets}%
+       \typeout{>>>> ... done.}}%
+  \fi
 }
 
 \endinput
