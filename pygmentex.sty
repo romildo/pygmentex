@@ -393,13 +393,13 @@
   \immediate\closeout\pygmented@outfile%
   \ifpygmented@opt@force
     \typeout{>>>> running pygmentex (option force=true) ...}%
-    \ShellEscape{pygmentex \jobname.snippets}%
+    \ShellEscape{if [ -z "$TEXMF_OUTPUT_DIRECTORY" ]; then pygmentex \jobname.snippets ; else pygmentex "$TEXMF_OUTPUT_DIRECTORY"/\jobname.snippets; fi}%
     \typeout{>>>> ... done.}%
   \else
     \IfFileExists{\jobname.pygmented}%
       {\typeout{>>>> file \jobname.pygmented exists, not running pygmentex}}%
       {\typeout{>>>> no file \jobname.pygmented, running pygmentex ...}%
-       \ShellEscape{pygmentex \jobname.snippets}%
+       \ShellEscape{if [ -z "$TEXMF_OUTPUT_DIRECTORY" ]; then pygmentex \jobname.snippets ; else pygmentex "$TEXMF_OUTPUT_DIRECTORY"/\jobname.snippets; fi}%
        \typeout{>>>> ... done.}}%
   \fi
 }
