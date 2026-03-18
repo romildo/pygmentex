@@ -28,29 +28,32 @@
 %   finding the widest string in a comma
 %   separated list of strings delimited by parenthesis
 % =========================================================
-
-% arguments:
+% Arguments:
 % #1) text: a comma separeted list of strings
 % #2) formatter: a macro to format each string
 % #3) dimension: will hold the result
+% =========================================================
 
-\def\widest(#1)#2#3{%
-  \begingroup
-  \def\widest@end{\widest@end}%
-  \def\widest@helper##1,{%
-    \ifx\widest@end##1\relax
-    \else
-      \settowidth\dimen@{#2{##1}}%
-      \ifdim#3<\dimen@
-        \global#3=\dimen@
-      \else
-      \fi
-      \expandafter\widest@helper
-    \fi
-  }%
-  \widest@helper#1,\widest@end,%
-  \endgroup
-}
+\ExplSyntaxOn
+\cs_new_protected:Npn \pygmented_widest:nnN #1#2#3
+  {
+    \dim_zero:N #3
+    \clist_map_inline:nn { #1 }
+      {
+        \hbox_set:Nn \l_tmpa_box { #2 { ##1 } }
+        \dim_set:Nn #3 { \dim_max:nn { #3 } { \box_wd:N \l_tmpa_box } }
+      }
+  }
+
+% Preserve the exact original calling signature: \widest(#1)#2#3
+\cs_new_protected:Npn \pygmented_widest_wrapper:w (#1)#2#3
+  {
+    \pygmented_widest:nnN { #1 } { #2 } #3
+  }
+
+% Map the public \widest macro to our wrapper INSIDE the syntax block
+\cs_new_eq:NN \widest \pygmented_widest_wrapper:w
+\ExplSyntaxOff
 
 % =========================================================
 % fancyvrb new commands to append to a file
