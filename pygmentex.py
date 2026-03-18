@@ -18,6 +18,7 @@ __docformat__ = 'restructuredtext'
 import sys
 import argparse
 import re
+import textwrap
 from os.path import splitext
 
 from pygments import highlight
@@ -263,6 +264,11 @@ def pyg(outfile, outencoding, n, opts, extra_opts, text, usedstyles, inline_deli
 
     lexer.encoding = ''
     # _fmter.encoding = outencoding
+
+    # Only autogobble if requested AND it is a displayed block (not inline)
+    autogobble = get_bool_opt(opts, 'autogobble', False)
+    if autogobble and not inline_delim:
+        text = textwrap.dedent(text)
 
     stylename = opts['sty']
 
