@@ -16,7 +16,7 @@ __version__ = '0.10'
 __docformat__ = 'restructuredtext'
 
 import sys
-import getopt
+import argparse
 import re
 from os.path import splitext
 
@@ -431,83 +431,69 @@ def read_input(filename, encoding):
 
     return code, encoding
 
-
-USAGE = """\
-Usage: %s [-o <output file name>] <input file name>
-       %s -h | -V
-
+def main(args=sys.argv):
+    """
+    Main command line entry point.
+    """
+    # 1. Set up the ArgumentParser
+    parser = argparse.ArgumentParser(
+        description="PygmenTeX is a converter that syntax-highlights snippets of source code extracted from a LaTeX file.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""\
 The input file should consist of a sequence of source code snippets, as
 produced by the `pygmentex` LaTeX package. Each code snippet is
 highlighted using Pygments, and a LaTeX command that expands to the
 highlighted code snippet is written to the output file.
 
-It also writes to the output file a set of LaTeX macro definitions the
+It also writes to the output file a set of LaTeX macro definitions for the
 Pygments styles that are used in the code snippets.
 
-If no output file name is given, use `<input file name>.pygmented`.
+If no output file name is given, it uses `<input file name>.pygmented`.
 
-The -e option enables escaping to LaTex. Text delimited by the <left>
+The -e option enables escaping to LaTeX. Text delimited by the <left>
 and <right> characters is read as LaTeX code and typeset accordingly. It
 has no effect in string literals. It has no effect in comments if
-`texcomments` or `mathescape` is set.
+`texcomments` or `mathescape` is set."""
+    )
 
-The -h option prints this help.
+    # 2. Define the expected arguments
+    parser.add_argument('-o', dest='outfn', metavar='<output file name>',
+                        help='Specific output file name')
+    parser.add_argument('-e', dest='escapeinside', metavar='<chars>',
+                        help='Enable escaping to LaTeX using <left> and <right> delimiters')
+    parser.add_argument('-V', '--version', action='version',
+                        version='PygmenTeX version %s, (c) 2020 by José Romildo.' % __version__)
+    parser.add_argument('infn', metavar='<input file name>',
+                        help='The input .snippets file')
 
-The -V option prints the package version.
-"""
+    # 3. Parse the arguments (skipping args[0] which is the script name)
+    # argparse automatically handles -h/--help and -V/--version, exiting if they are called.
+    parsed_args = parser.parse_args(args[1:])
 
-
-def main(args = sys.argv):
-    """
-    Main command line entry point.
-    """
-    usage = USAGE % ((args[0],) * 2)
-
+    # 4. Read the input file
     try:
-        popts, args = getopt.getopt(args[1:], 'e:o:hV')
-    except getopt.GetoptError as err:
-        sys.stderr.write(usage)
-        return 2
-    opts = {}
-    for opt, arg in popts:
-        opts[opt] = arg
-
-    if not opts and not args:
-        print(usage)
-        return 0
-
-    if opts.pop('-h', None) is not None:
-        print(usage)
-        return 0
-
-    if opts.pop('-V', None) is not None:
-        print('PygmenTeX version %s, (c) 2020 by José Romildo.' % __version__)
-        return 0
- 
-    if len(args) != 1:
-        sys.stderr.write(usage)
-        return 2
-    infn = args[0]
-    try:
-        code, inencoding = read_input(infn, "guess")
+        code, inencoding = read_input(parsed_args.infn, "guess")
     except Exception as err:
         print('Error: cannot read input file: ', err, file=sys.stderr)
         return 1
 
-    outfn = opts.pop('-o', None)
+    # 5. Determine output filename and open it
+    outfn = parsed_args.outfn
     if not outfn:
-        root, ext = splitext(infn)
+        root, ext = splitext(parsed_args.infn)
         outfn = root + '.pygmented'
+        
     try:
         outfile = open(outfn, 'w')
     except Exception as err:
         print('Error: cannot open output file: ', err, file=sys.stderr)
         return 1
 
+    # Note: parsed_args.escapeinside is currently ignored by convert(), 
+    # just as it was in the original getopt implementation.
     convert(code, outfile, inencoding)
 
     return 0
-
 
 if __name__ == '__main__':
     try:
