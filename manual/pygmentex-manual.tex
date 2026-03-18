@@ -27,6 +27,7 @@
 \href{mailto:malaquias@ufop.edu.br}{malaquias@ufop.edu.br}\\
 \url{https://github.com/romildo/pygmentex}
 }
+\date{\today}
 \maketitle
 
 \section{The Pygmen\TeX{} package}
@@ -256,6 +257,30 @@ A code snippet inside a minipage:
         }
       \end{pygmented}
 \end{minipage}
+\end{Example}
+
+
+\subsection{\texttt{autogobble}}
+
+The boolean option \verb|autogobble| automatically removes common leading
+whitespace from the code snippet. This is highly recommended when your
+\verb|pygmented| environments are indented to match the surrounding \LaTeX{}
+source code, as it saves you from having to manually count and specify the
+exact number of characters to suppress using the standard \verb|gobble|
+option.
+
+\begin{Example}
+A code snippet deeply indented in the \LaTeX{} source:
+\begin{itemize}
+  \item Item one
+  \item Item two
+        \begin{pygmented}[lang=python,autogobble,colback=yellow!20]
+          def greet(name):
+              # The indentation relative to the 'def' keyword is preserved!
+              print(f"Hello, {name}!")
+              return True
+        \end{pygmented}
+\end{itemize}
 \end{Example}
 
 
@@ -677,7 +702,8 @@ listing.
   ]
 object HelloWorld extends App {
   println("Hello, world!")
-}\end{pygmented}
+}
+\end{pygmented}
 
 \begin{pygmented}[boxing method=tcolorbox,lang=java,
   enhanced,colback=blue!10!white,colframe=orange,top=4mm,
