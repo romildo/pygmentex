@@ -207,18 +207,50 @@
   \endgroup
 }
 
-\newenvironment{pygmented}[1][]{%
+
+% =========================================================
+% Custom Environment Parser for `pygmented`
+% ---------------------------------------------------------
+% We cannot use standard \newenvironment because \@ifnextchar
+% considers newlines as whitespace and consumes them. This
+% merges the \begin line with the first line of source code,
+% causing fancyvrb to crash with an "Extraneous input" error.
+%
+% We also cannot use fancyvrb's \DefineVerbatimEnvironment
+% because it forces its own internal keyval parser, which
+% crashes upon seeing our custom pgfkeys (like 'autogobble').
+%
+% THE FIX: We temporarily make the newline character (^^M)
+% \active. This acts as a wall, tricking \@ifnextchar into
+% stopping its search without eating the newline. We then
+% safely parse our pgfkeys and revert the newline to its
+% normal state (\catcode 5) before passing control to fancyvrb.
+% =========================================================
+\begingroup
+\catcode`\^^M=\active
+\gdef\pygmented@Environment{%
+  \catcode`\^^M=\active
+  \@ifnextchar[{\catcode`\^^M=5 \pygmented@StepTwo}{\catcode`\^^M=5 \pygmented@StepTwo[]}%
+}
+\endgroup
+
+\def\pygmented{\pygmented@Environment}
+
+\long\def\pygmented@StepTwo[#1]{%
   \pygmented@process@options{#1}%
+  \def\FV@KeyValues{}% <-- Prevents fancyvrb from attempting to parse residual options
   \immediate\write\pygmented@outfile{<@@pygmented@display@\the\pygmented@counter}%
   \immediate\write\pygmented@outfile{\detokenize\expandafter{\pygmented@global@options},\detokenize{#1}}%
-  \VerbatimEnvironment
-  \begin{VerbatimOutAppend}{\pygmented@outfile}%
-}{%
-  \end{VerbatimOutAppend}%
+  \FVB@VerbatimOutAppend{\pygmented@outfile}%
+}
+
+\def\endpygmented{%
+  \FVE@VerbatimOutAppend
   \immediate\write\pygmented@outfile{>@@pygmented@display@\the\pygmented@counter}%
   \csname pygmented@snippet@\the\pygmented@counter\endcsname
   \global\advance\pygmented@counter by 1\relax
 }
+
 
 \newcommand\pyginline[2][]{%
   \begingroup
