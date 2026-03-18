@@ -25,10 +25,9 @@ from pygments import highlight
 from pygments.styles import get_style_by_name
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters.latex import LatexFormatter, escape_tex, _get_ttype_name
-from pygments.util import get_bool_opt, get_int_opt
+from pygments.util import get_bool_opt, get_int_opt, guess_decode, ClassNotFound
 from pygments.lexer import Lexer
 from pygments.token import Token
-from pygments.util import guess_decode
 
 ###################################################
 # The following code is in >=pygments-2.0
@@ -330,17 +329,20 @@ def pyg(outfile, outencoding, n, opts, extra_opts, text, usedstyles, inline_deli
                      body        = '\\newline\n'.join(lines)))
 
 
-
 def parse_opts(basedic, opts):
     dic = basedic.copy()
-    for opt in re.split(r'\s*,\s*', opts):
-        x = re.split(r'\s*=\s*', opt)
-        if len(x) == 2 and x[0] and x[1]:
-            dic[x[0]] = x[1]
-        elif len(x) == 1 and x[0]:
-            dic[x[0]] = True
+    if opts:
+        # Strip the whole string first, then split
+        for opt in re.split(r'\s*,\s*', opts.strip()):
+            if opt:
+                # Split by the first '=' only
+                parts = re.split(r'\s*=\s*', opt, maxsplit=1)
+                key = parts[0].strip()
+                if key:
+                    # Determine value: if there's an '=' and the stripped RHS is non‑empty, use it; otherwise True
+                    value = parts[1].strip() if len(parts) == 2 and parts[1].strip() else True
+                    dic[key] = value
     return dic
-
 
 
 _re_display = re.compile(
