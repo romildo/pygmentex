@@ -57,7 +57,7 @@ Unlike other packages that call Pygments for *each* code snippet (a slow process
 
 > **Note:** Shell escape (`--shell-escape`) is **not required**. The processing is a separate, explicit step. **However, if shell escape is enabled, the `pygmentex.py` script may be executed automatically.**
 
-For full documentation and examples, see [pygmentex-manual.pdf](pygmentex-manual.pdf).
+For full documentation and examples, see the [compiled manual](manual/pygmentex-manual.pdf).
 
 ## License
 
