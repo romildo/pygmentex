@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to Semantic Versioning.
 
+## [0.12.1] - 2026-03-19
+
+### Fixed
+- **List Margin Regression (LaTeX)**: Fixed a bug introduced in v0.12 where `pygmented` environments placed inside lists (e.g., `itemize`, `enumerate`, `quotation`) ignored the parent margins and snapped flush to the left page margin. Snippets are now wrapped in a zero-padding `\list` to perfectly inherit `\@totalleftmargin` and `\linewidth` without adding unwanted vertical spacing.
+- **Complex Option Parsing (Python)**: Rewrote the `parse_opts` function in `pygmentex.py` to be aware of curly brace nesting (`{...}`). This prevents Pygments from incorrectly splitting complex, comma-separated LaTeX arguments (such as `tcolorbox` TikZ overlays) and crashing the compiler.
+
+### Changed
+- **Documentation**: Corrected the link to the compiled manual in `README.md` to point to the new `manual/` subdirectory.
+
+---
+
 ## [0.12] - 2026-03-18
 
 ### Added
