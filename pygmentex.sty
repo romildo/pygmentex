@@ -247,7 +247,26 @@
 \def\endpygmented{%
   \FVE@VerbatimOutAppend
   \immediate\write\pygmented@outfile{>@@pygmented@display@\the\pygmented@counter}%
+
+  % =========================================================
+  % INVISIBLE MARGIN WRAPPER
+  % ---------------------------------------------------------
+  % Because we bypass fancyvrb's standard environment setup,
+  % the snippet loses LaTeX's normal list margin context.
+  % Without this, snippets inside `itemize` or `quotation`
+  % environments would snap flush to the left page margin.
+  %
+  % We wrap the rendered snippet in a custom \list to force it
+  % to inherit \@totalleftmargin and \linewidth. We explicitly
+  % set all vertical spacing (\topsep, \parskip, etc.) to 0pt
+  % (\z@) so we don't interfere with the internal vertical
+  % spacing engines of tcolorbox or mdframed.
+  % =========================================================
+  \list{}{\leftmargin\z@ \rightmargin\z@ \topsep\z@ \partopsep\z@ \parskip\z@ \parsep\z@ \itemsep\z@}%
+  \item\relax
   \csname pygmented@snippet@\the\pygmented@counter\endcsname
+  \endlist
+
   \global\advance\pygmented@counter by 1\relax
 }
 
